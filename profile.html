@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LingoPair — My Profile</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗣️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F5F0;--white:#FFFFFF;--ink:#1A1814;--ink2:#2d2a25;--muted:#8A8680;--border:#E2DDD6;--accent:#2D5BE3;--accent-h:#1e49c4;--accent-l:#EEF2FD;--gold:#C8A96E;--green:#22c55e;--green-l:#dcfce7;--green-d:#16a34a;--red:#ef4444;--sidebar-w:232px;--radius:14px;--radius-lg:22px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+.app{display:grid;grid-template-columns:var(--sidebar-w) 1fr;min-height:100vh;}
+.sidebar{background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sidebar-logo{padding:20px 18px 16px;border-bottom:1px solid var(--border);font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--ink);display:block;cursor:default;}
+.sidebar-logo sup{font-family:'DM Sans',sans-serif;font-size:.5rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);vertical-align:super;margin-left:2px;}
+.sidebar-nav{flex:1;padding:12px 10px;}
+.nav-section{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:14px 8px 5px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;font-size:.875rem;color:var(--muted);text-decoration:none;cursor:pointer;transition:all .15s;margin-bottom:1px;border:none;background:none;width:100%;text-align:left;font-family:inherit;}
+.nav-item:hover{background:var(--bg);color:var(--ink);}
+.nav-item.active{background:var(--accent-l);color:var(--accent);font-weight:500;}
+.nav-icon{font-size:.95rem;width:20px;text-align:center;flex-shrink:0;}
+.sidebar-bottom{padding:12px 10px;border-top:1px solid var(--border);}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;cursor:pointer;transition:background .15s;text-decoration:none;color:var(--ink);}
+.sidebar-user:hover{background:var(--bg);}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:var(--accent-l);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;overflow:hidden;}
+.user-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.user-name{font-size:.875rem;font-weight:500;line-height:1.2;}
+.user-plan{font-size:.7rem;color:var(--muted);}
+.main{display:flex;flex-direction:column;min-height:100vh;}
+.topbar{height:60px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;background:rgba(247,245,240,.92);backdrop-filter:blur(12px);position:sticky;top:0;z-index:50;justify-content:space-between;}
+.topbar-title{font-family:'DM Serif Display',serif;font-size:1.15rem;letter-spacing:-.02em;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.content{padding:28px;flex:1;max-width:900px;}
+/* HERO */
+.profile-hero{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px;}
+.profile-cover{height:140px;background:linear-gradient(135deg,var(--ink) 0%,#3a3020 100%);position:relative;background-size:cover;background-position:center;}
+.cover-btn{position:absolute;bottom:12px;right:16px;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);color:var(--white);padding:6px 12px;border-radius:8px;font-size:.75rem;font-weight:500;cursor:pointer;font-family:inherit;}
+.cover-btn:hover{background:rgba(255,255,255,.25);}
+.profile-body{padding:0 24px 24px;}
+.profile-identity{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px;}
+.profile-avatar-wrap{margin-top:-40px;position:relative;}
+.profile-avatar{width:80px;height:80px;border-radius:50%;border:3px solid var(--white);background:var(--accent-l);display:flex;align-items:center;justify-content:center;font-size:2.2rem;box-shadow:0 4px 16px rgba(26,24,20,.12);overflow:hidden;cursor:pointer;}
+.profile-avatar img{width:100%;height:100%;object-fit:cover;}
+#avatar-upload{display:none;}
+.profile-avatar-edit{position:absolute;bottom:2px;right:2px;width:24px;height:24px;border-radius:50%;background:var(--ink);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:.65rem;cursor:pointer;border:2px solid var(--white);}
+.profile-name{font-family:'DM Serif Display',serif;font-size:1.5rem;letter-spacing:-.03em;margin-bottom:2px;}
+.verified-badge{background:var(--accent-l);color:var(--accent);font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:20px;}
+.profile-handle{font-size:.875rem;color:var(--muted);margin-bottom:8px;}
+.profile-meta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;}
+.meta-item{font-size:.82rem;color:var(--muted);}
+.profile-bio{font-size:.9rem;line-height:1.75;font-weight:300;margin-bottom:12px;color:var(--ink);}
+.tag{background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:.78rem;color:var(--muted);display:inline-block;}
+/* TABS */
+.profile-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:24px;}
+.tab{padding:10px 20px;font-size:.875rem;font-weight:500;border:none;background:transparent;cursor:pointer;font-family:inherit;color:var(--muted);border-bottom:2px solid transparent;transition:all .15s;margin-bottom:-1px;}
+.tab:hover{color:var(--ink);}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:16px;}
+.card-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.card-title{font-family:'DM Serif Display',serif;font-size:1rem;}
+.card-body{padding:20px;}
+/* LANG */
+.lang-item{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+.lang-flag{font-size:1.4rem;}
+.lang-info{flex:1;}
+.lang-name{font-size:.9rem;font-weight:500;}
+.lang-level{font-size:.75rem;color:var(--muted);}
+.lang-badge{font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:20px;}
+.badge-native{background:var(--ink);color:var(--white);}
+.badge-learning{background:var(--accent-l);color:var(--accent);}
+.remove-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:1rem;padding:4px;}
+.remove-btn:hover{color:var(--red);}
+/* INTERESTS */
+.interests-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.interest-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:20px;padding:6px 14px;font-size:.8rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s;font-family:inherit;}
+.interest-btn:hover{border-color:var(--ink);color:var(--ink);}
+.interest-btn.active{background:var(--accent-l);border-color:var(--accent);color:var(--accent);}
+/* FORM */
+.form-group{margin-bottom:18px;}
+.form-label{display:block;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px;}
+.form-input,.form-select,.form-textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:.9rem;background:var(--white);color:var(--ink);outline:none;transition:border-color .2s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);}
+.form-textarea{resize:vertical;min-height:100px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.btn-primary{background:var(--ink);color:var(--white);border:none;padding:11px 24px;border-radius:50px;font-size:.875rem;font-weight:500;cursor:pointer;font-family:inherit;width:100%;transition:all .2s;}
+.btn-primary:hover{background:var(--ink2);}
+.btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--border);padding:7px 14px;border-radius:50px;font-size:.8rem;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s;}
+.btn-outline:hover{border-color:var(--ink);}
+.btn-sm{padding:6px 12px;font-size:.78rem;}
+.add-lang-form{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px;margin-top:12px;display:none;}
+.add-lang-form.open{display:block;}
+.lang-form-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;}
+/* PREMIUM CARD */
+.premium-card{background:var(--ink);color:var(--white);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px;}
+.premium-card h3{font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:6px;}
+.premium-card p{font-size:.8rem;color:rgba(255,255,255,.55);font-weight:300;margin-bottom:16px;line-height:1.6;}
+.premium-features{list-style:none;margin-bottom:16px;}
+.premium-features li{font-size:.82rem;color:rgba(255,255,255,.75);padding:4px 0;display:flex;align-items:center;gap:8px;}
+.premium-features li::before{content:'✓';color:var(--gold);font-weight:700;}
+.btn-gold{background:var(--gold);color:var(--white);border:none;padding:11px;border-radius:50px;font-size:.875rem;font-weight:600;cursor:pointer;font-family:inherit;width:100%;}
+/* TOAST */
+#save-toast{position:fixed;bottom:28px;right:28px;background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;font-size:.875rem;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;}
+/* LANG SELECTOR */
+.lang-selector{position:relative;}
+.lang-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;}
+.lang-dropdown{display:none;position:absolute;top:44px;right:0;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 8px 24px rgba(26,24,20,.12);z-index:100;min-width:160px;overflow:hidden;}
+.lang-dropdown.open{display:block;}
+.lang-opt{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;font-size:.875rem;transition:background .15s;}
+.lang-opt:hover{background:var(--bg);}
+/* COVER PICKER */
+.cover-modal{display:none;position:fixed;inset:0;background:rgba(26,24,20,.6);backdrop-filter:blur(4px);z-index:300;align-items:center;justify-content:center;padding:20px;}
+.cover-modal.open{display:flex;}
+.cover-inner{background:var(--white);border-radius:var(--radius-lg);padding:28px;max-width:620px;width:100%;max-height:85vh;overflow-y:auto;}
+.cover-section-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:16px 0 8px;}
+.cover-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px;}
+.cover-opt{height:80px;border-radius:var(--radius);cursor:pointer;border:3px solid transparent;transition:all .2s;position:relative;overflow:hidden;background-size:cover;background-position:center;}
+.cover-opt:hover{transform:scale(1.03);}
+.cover-opt.selected{border-color:var(--accent);}
+.cover-opt-label{position:absolute;bottom:6px;left:8px;font-size:.7rem;color:rgba(255,255,255,.9);font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.6);}
+@media(max-width:900px){.app{grid-template-columns:1fr;}.sidebar{display:none;}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <span class="sidebar-logo">LingoPair<sup>Beta</sup></span>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Dashboard</a>
+    <a class="nav-item" href="search.html"><span class="nav-icon">🔍</span> Find Partners</a>
+    <a class="nav-item" href="messages.html"><span class="nav-icon">💬</span> Messages</a>
+    <div class="nav-section">Account</div>
+    <a class="nav-item active" href="profile.html"><span class="nav-icon">👤</span> My Profile</a>
+    <a class="nav-item" href="#"><span class="nav-icon">⚙️</span> Settings</a>
+    <a class="nav-item" href="#" onclick="logout()"><span class="nav-icon">🚪</span> Cerrar sesión</a>
+    <a class="nav-item" href="index.html#pricing"><span class="nav-icon">💎</span> Upgrade</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <a href="profile.html" class="sidebar-user">
+      <div class="user-avatar" id="sidebar-avatar">🧑</div>
+      <div><div class="user-name" id="sidebar-name"></div><div class="user-plan" id="sidebar-plan"></div></div>
+      <span style="margin-left:auto;font-size:.8rem;color:var(--muted);">›</span>
+    </a>
+  </div>
+</aside>
+<main class="main">
+  <div class="topbar">
+    <span class="topbar-title" id="topbar-title">My Profile</span>
+    <div class="topbar-right">
+      <div class="lang-selector">
+        <button class="lang-btn" id="lang-btn" onclick="toggleLangDropdown()">🌐</button>
+        <div class="lang-dropdown" id="lang-dropdown">
+          <div class="lang-opt" onclick="setLang('en')">🇺🇸 English</div>
+          <div class="lang-opt" onclick="setLang('es')">🇪🇸 Español</div>
+          <div class="lang-opt" onclick="setLang('fr')">🇫🇷 Français</div>
+          <div class="lang-opt" onclick="setLang('de')">🇩🇪 Deutsch</div>
+          <div class="lang-opt" onclick="setLang('it')">🇮🇹 Italiano</div>
+          <div class="lang-opt" onclick="setLang('pt')">🇧🇷 Português</div>
+          <div class="lang-opt" onclick="setLang('ru')">🇷🇺 Русский</div>
+          <div class="lang-opt" onclick="setLang('zh')">🇨🇳 中文</div>
+          <div class="lang-opt" onclick="setLang('ja')">🇯🇵 日本語</div>
+          <div class="lang-opt" onclick="setLang('ar')">🇸🇦 العربية</div>
+          <div class="lang-opt" onclick="setLang('id')">🇮🇩 Indonesia</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="content">
+    <!-- HERO -->
+    <div class="profile-hero">
+      <div class="profile-cover" id="profile-cover">
+        <button class="cover-btn" onclick="openCoverPicker()">🖼️ Change cover</button>
+      </div>
+      <div class="profile-body">
+        <div class="profile-identity">
+          <div class="profile-avatar-wrap">
+            <div class="profile-avatar" id="profile-avatar-el" onclick="document.getElementById('avatar-upload').click()" title="Click to change photo">🧑</div>
+            <input type="file" id="avatar-upload" accept="image/*" onchange="uploadAvatar(this)">
+            <div class="profile-avatar-edit" onclick="document.getElementById('avatar-upload').click()">📷</div>
+          </div>
+          <div style="display:flex;gap:8px;padding-bottom:8px;">
+            <button class="btn-outline btn-sm" onclick="switchTab('edit')" id="btn-edit-profile">✏️ Edit profile</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:3px;">
+          <div class="profile-name" id="hero-name"></div>
+          <span class="verified-badge">✓ Verified</span>
+        </div>
+        <div class="profile-handle" id="hero-handle"></div>
+        <div class="profile-meta">
+          <span class="meta-item" id="hero-country"></span>
+          <span class="meta-item" id="hero-plan"></span>
+        </div>
+        <div class="profile-bio" id="hero-bio"></div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;" id="hero-interests"></div>
+      </div>
+    </div>
+    <!-- TABS -->
+    <div class="profile-tabs">
+      <button class="tab active" onclick="switchTab('overview')" id="tab-overview">Overview</button>
+      <button class="tab" onclick="switchTab('edit')" id="tab-edit">Edit Profile</button>
+    </div>
+    <!-- OVERVIEW -->
+    <div class="tab-panel active" id="panel-overview">
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;">
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title" id="card-languages-title">Languages</span>
+              <button class="btn-outline btn-sm" onclick="switchTab('edit');setTimeout(()=>document.getElementById('add-lang-form').classList.add('open'),100)" id="btn-add-lang">+ Add language</button>
+            </div>
+            <div class="card-body" id="overview-langs">
+              <div style="color:var(--muted);font-size:.875rem;" id="no-langs-msg">No languages added yet.</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="premium-card" id="premium-upgrade-card">
+            <h3 id="premium-title">Go Premium</h3>
+            <p id="premium-desc">Unlock the full LingoPair experience.</p>
+            <ul class="premium-features">
+              <li id="pf1">Unlimited messages & video chat</li>
+              <li id="pf2">AI grammar correction</li>
+              <li id="pf3">No ads, ever</li>
+            </ul>
+            <button class="btn-gold" onclick="window.location='index.html#pricing'" id="btn-upgrade">Upgrade — €9/mo →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- EDIT PROFILE -->
+    <div class="tab-panel" id="panel-edit">
+      <!-- Personal info -->
+      <div class="card">
+        <div class="card-header"><span class="card-title" id="card-personal-title">Personal info</span></div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group"><label class="form-label" id="label-firstname">First name</label><input class="form-input" id="edit-first-name" placeholder="Your first name"></div>
+            <div class="form-group"><label class="form-label" id="label-lastname">Last name</label><input class="form-input" id="edit-last-name" placeholder="Your last name"></div>
+          </div>
+          <div class="form-group"><label class="form-label" id="label-username">Username</label><input class="form-input" id="edit-username" placeholder="your.username"></div>
+          <div class="form-group">
+            <label class="form-label" id="label-country">Country</label>
+            <select class="form-input form-select" id="edit-country">
+              <option value="">Select country...</option>
+              <option>Spain</option><option>United States</option><option>United Kingdom</option>
+              <option>France</option><option>Germany</option><option>Japan</option>
+              <option>Mexico</option><option>Brazil</option><option>Argentina</option>
+              <option>Colombia</option><option>Italy</option><option>Portugal</option>
+              <option>South Korea</option><option>China</option><option>Australia</option>
+              <option>Canada</option><option>Netherlands</option><option>Sweden</option>
+              <option>Russia</option><option>Indonesia</option><option>Other</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label" id="label-about">About me</label>
+            <textarea class="form-input form-textarea" id="edit-bio" placeholder="Tell potential partners a bit about yourself..."></textarea>
+          </div>
+          <button class="btn-primary" onclick="saveBasicInfo()" id="btn-save-basic">Save changes</button>
+        </div>
+      </div>
+      <!-- Languages -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title" id="card-langs-edit-title">Languages</span>
+          <button class="btn-outline btn-sm" onclick="document.getElementById('add-lang-form').classList.toggle('open')" id="btn-add-lang2">+ Add language</button>
+        </div>
+        <div class="card-body">
+          <div id="edit-langs-list"></div>
+          <div class="add-lang-form" id="add-lang-form">
+            <div class="lang-form-row">
+              <div>
+                <label class="form-label" id="label-lang">Language</label>
+                <select class="form-input form-select" id="new-lang-name">
+                  <option value="">Select...</option>
+                  <optgroup label="Most spoken">
+                  <option>English</option><option>Mandarin Chinese</option><option>Hindi</option>
+                  <option>Spanish</option><option>French</option><option>Arabic</option>
+                  <option>Bengali</option><option>Portuguese</option><option>Russian</option>
+                  <option>Urdu</option><option>Indonesian</option><option>German</option>
+                  <option>Japanese</option><option>Korean</option><option>Tamil</option>
+                  <option>Vietnamese</option><option>Italian</option><option>Turkish</option>
+                  <option>Polish</option>
+                  </optgroup>
+                  <optgroup label="Europe">
+                  <option>Dutch</option><option>Swedish</option><option>Danish</option>
+                  <option>Norwegian</option><option>Finnish</option><option>Greek</option>
+                  <option>Czech</option><option>Slovak</option><option>Hungarian</option>
+                  <option>Romanian</option><option>Bulgarian</option><option>Croatian</option>
+                  <option>Serbian</option><option>Ukrainian</option><option>Catalan</option>
+                  <option>Basque</option><option>Galician</option><option>Lithuanian</option>
+                  <option>Latvian</option><option>Estonian</option><option>Slovenian</option>
+                  <option>Macedonian</option><option>Albanian</option><option>Belarusian</option>
+                  <option>Irish</option><option>Maltese</option>
+                  </optgroup>
+                  <optgroup label="Asia">
+                  <option>Telugu</option><option>Marathi</option><option>Gujarati</option>
+                  <option>Kannada</option><option>Malayalam</option><option>Punjabi</option>
+                  <option>Sinhala</option><option>Nepali</option><option>Pashto</option>
+                  <option>Persian (Farsi)</option><option>Thai</option><option>Burmese</option>
+                  <option>Khmer</option><option>Lao</option><option>Filipino (Tagalog)</option>
+                  <option>Malay</option><option>Kazakh</option><option>Uzbek</option>
+                  <option>Azerbaijani</option><option>Mongolian</option><option>Georgian</option>
+                  <option>Armenian</option><option>Hebrew</option>
+                  </optgroup>
+                  <optgroup label="Africa & Middle East">
+                  <option>Swahili</option><option>Hausa</option><option>Yoruba</option>
+                  <option>Igbo</option><option>Amharic</option><option>Somali</option>
+                  <option>Zulu</option><option>Xhosa</option><option>Afrikaans</option>
+                  </optgroup>
+                </select>
+              </div>
+              <div>
+                <label class="form-label" id="label-type">Type</label>
+                <select class="form-input form-select" id="new-lang-type">
+                  <option value="native">Native</option>
+                  <option value="learning">Learning</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label" id="label-level">Level</label>
+                <select class="form-input form-select" id="new-lang-level">
+                  <option>A1</option><option>A2</option><option>B1</option>
+                  <option>B2</option><option>C1</option><option>C2 / Native</option>
+                </select>
+              </div>
+              <div style="padding-top:22px;">
+                <button class="btn-outline" onclick="addLanguage()" id="btn-add">Add</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Interests -->
+      <div class="card">
+        <div class="card-header"><span class="card-title" id="card-interests-title">Interests</span></div>
+        <div class="card-body">
+          <p style="font-size:.85rem;color:var(--muted);margin-bottom:16px;" id="interests-desc">Select your interests to help find better partners.</p>
+          <div class="interests-grid">
+            <button class="interest-btn" onclick="this.classList.toggle('active')" data-val="💻 Technology">💻 Technology</button>
+            <button class="interest-btn" onclick="this.classList.toggle('active')" data-val="🍳 Cooking">🍳 Cooking</button>
+            <button class="interest-btn" onclick="this.classList.toggle('active')" data-val="🥾 Hiking">🥾 Hiking</button>
+            <button class="interest-btn" onclick="this.classList.toggle('active')" data-val="🎵 Music">🎵 Music</button>
+            <button class="interest-btn" onclick="this.classList.toggle('active')" data-val="📚 Reading">📚 Reading</button>
+            <button class="interest-btn" onclick="this.classList.toggle('active')" data-val="✈️ Travel">✈️ Travel</button>
+            <button class="interest-btn" onclick="this.classList.toggle('active')" data-val="🎬 Film">🎬 Film</button>
+            <button class="interest-btn" onclick="this.classList.toggle('active')" data-val="🎮 Gaming">🎮 Gaming</button>
+            <button class="interest-btn" onclick="this.classList.toggle('active')" data-val="🏃 Sports">🏃 Sports</button>
+            <button class="interest-btn" onclick="this.classList.toggle('active')" data-val="🎨 Art">🎨 Art</button>
+            <button class="interest-btn" onclick="this.classList.toggle('active')" data-val="🌱 Nature">🌱 Nature</button>
+            <button class="interest-btn" onclick="this.classList.toggle('active')" data-val="🐾 Animals">🐾 Animals</button>
+            <button class="interest-btn" onclick="this.classList.toggle('active')" data-val="📸 Photography">📸 Photography</button>
+            <button class="interest-btn" onclick="this.classList.toggle('active')" data-val="🧘 Wellness">🧘 Wellness</button>
+            <button class="interest-btn" onclick="this.classList.toggle('active')" data-val="🍷 Food & Wine">🍷 Food & Wine</button>
+            <button class="interest-btn" onclick="this.classList.toggle('active')" data-val="🎸 Concerts">🎸 Concerts</button>
+          </div>
+          <button class="btn-primary" style="margin-top:16px;" onclick="saveInterests()" id="btn-save-interests">Save interests</button>
+        </div>
+      </div>
+      <!-- Password -->
+      <div class="card">
+        <div class="card-header"><span class="card-title" id="card-password-title">Change password</span></div>
+        <div class="card-body">
+          <div class="form-group"><label class="form-label" id="label-newpw">New password</label><input type="password" class="form-input" id="new-password" placeholder="Min. 8 characters"></div>
+          <div class="form-group"><label class="form-label" id="label-confirmpw">Confirm password</label><input type="password" class="form-input" id="confirm-password" placeholder="Repeat password"></div>
+          <button class="btn-outline" onclick="changePassword()" id="btn-update-pw">Update password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+
+<div id="save-toast">✓ Saved!</div>
+
+<!-- COVER PICKER -->
+<div class="cover-modal" id="cover-modal" onclick="if(event.target===this)closeCoverPicker()">
+  <div class="cover-inner">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+      <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;" id="cover-title">Choose a cover</div>
+      <button onclick="closeCoverPicker()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--muted);">✕</button>
+    </div>
+    <div class="cover-section-title">🏙️ Cities</div>
+    <div class="cover-grid" id="cg-cities"></div>
+    <div class="cover-section-title">🌿 Nature</div>
+    <div class="cover-grid" id="cg-nature"></div>
+    <button class="btn-primary" style="margin-top:16px;" onclick="saveCover()" id="btn-apply-cover">Apply cover</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+window.supabaseClient = supabase.createClient(
+  'https://kzwptgbhcddebxdfnsqx.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6d3B0Z2JoY2RkZWJ4ZGZuc3F4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4Mjk0NzksImV4cCI6MjA4OTQwNTQ3OX0.9ulqg6eSaH2ONzn4yD3wi6ymQ-aShjx_7nMJuOt3Rps'
+);
+
+let currentUser = null;
+let userLanguages = [];
+const flagMap = {
+  'English':'🇺🇸','Mandarin Chinese':'🇨🇳','Hindi':'🇮🇳','Spanish':'🇪🇸','French':'🇫🇷',
+  'Arabic':'🇸🇦','Bengali':'🇧🇩','Portuguese':'🇧🇷','Russian':'🇷🇺','Urdu':'🇵🇰',
+  'Indonesian':'🇮🇩','German':'🇩🇪','Japanese':'🇯🇵','Korean':'🇰🇷','Tamil':'🇮🇳',
+  'Vietnamese':'🇻🇳','Italian':'🇮🇹','Turkish':'🇹🇷','Polish':'🇵🇱','Dutch':'🇳🇱',
+  'Swedish':'🇸🇪','Danish':'🇩🇰','Norwegian':'🇳🇴','Finnish':'🇫🇮','Greek':'🇬🇷',
+  'Czech':'🇨🇿','Hungarian':'🇭🇺','Romanian':'🇷🇴','Ukrainian':'🇺🇦','Catalan':'🇪🇸',
+  'Thai':'🇹🇭','Malay':'🇲🇾','Filipino (Tagalog)':'🇵🇭','Hebrew':'🇮🇱',
+  'Persian (Farsi)':'🇮🇷','Georgian':'🇬🇪','Armenian':'🇦🇲','Amharic':'🇪🇹',
+  'Swahili':'🇰🇪','Zulu':'🇿🇦','Afrikaans':'🇿🇦','Kazakh':'🇰🇿','Mongolian':'🇲🇳'
+};
+
+// ── TRANSLATIONS ──────────────────────────────────────────────────────────────
+const TR = {
+  en:{title:'My Profile',overview:'Overview',edit:'Edit Profile',languages:'Languages',addLang:'+ Add language',interests:'Interests',personal:'Personal info',fname:'First name',lname:'Last name',username:'Username',country:'Country',about:'About me',save:'Save changes',password:'Change password',newpw:'New password',confirmpw:'Confirm password',updatepw:'Update password',lang:'Language',type:'Type',level:'Level',add:'Add',premium:'Go Premium',premiumDesc:'Unlock the full LingoPair experience.',upgrade:'Upgrade — €9/mo →',saveInterests:'Save interests',interestsDesc:'Select your interests to help find better partners.',coverTitle:'Choose a cover',applyCover:'Apply cover',noBio:'No bio yet. Go to Edit Profile to add one.',noLangs:'No languages added yet.',memberSince:'Member since',native:'Native',learning:'Learning'},
+  es:{title:'Mi Perfil',overview:'Resumen',edit:'Editar Perfil',languages:'Idiomas',addLang:'+ Añadir idioma',interests:'Intereses',personal:'Info personal',fname:'Nombre',lname:'Apellido',username:'Usuario',country:'País',about:'Sobre mí',save:'Guardar',password:'Cambiar contraseña',newpw:'Nueva contraseña',confirmpw:'Confirmar',updatepw:'Actualizar',lang:'Idioma',type:'Tipo',level:'Nivel',add:'Añadir',premium:'Hazte Premium',premiumDesc:'Desbloquea la experiencia completa.',upgrade:'Mejorar — €9/mes →',saveInterests:'Guardar intereses',interestsDesc:'Selecciona tus intereses para encontrar mejores compañeros.',coverTitle:'Elige una portada',applyCover:'Aplicar portada',noBio:'Sin bio. Ve a Editar Perfil.',noLangs:'No hay idiomas añadidos.',memberSince:'Miembro desde',native:'Nativo',learning:'Aprendiendo'},
+  fr:{title:'Mon Profil',overview:'Aperçu',edit:'Modifier le profil',languages:'Langues',addLang:'+ Ajouter une langue',interests:'Intérêts',personal:'Infos personnelles',fname:'Prénom',lname:'Nom',username:"Nom d'utilisateur",country:'Pays',about:'À propos',save:'Enregistrer',password:'Changer le mot de passe',newpw:'Nouveau mot de passe',confirmpw:'Confirmer',updatepw:'Mettre à jour',lang:'Langue',type:'Type',level:'Niveau',add:'Ajouter',premium:'Passer Premium',premiumDesc:"Débloquez l'expérience complète.",upgrade:'Upgrade — €9/mois →',saveInterests:'Enregistrer',interestsDesc:'Sélectionnez vos intérêts.',coverTitle:'Choisir une couverture',applyCover:'Appliquer',noBio:'Pas encore de bio.',noLangs:'Aucune langue ajoutée.',memberSince:'Membre depuis',native:'Natif',learning:'Apprentissage'},
+  de:{title:'Mein Profil',overview:'Übersicht',edit:'Profil bearbeiten',languages:'Sprachen',addLang:'+ Sprache hinzufügen',interests:'Interessen',personal:'Persönliche Infos',fname:'Vorname',lname:'Nachname',username:'Benutzername',country:'Land',about:'Über mich',save:'Speichern',password:'Passwort ändern',newpw:'Neues Passwort',confirmpw:'Bestätigen',updatepw:'Aktualisieren',lang:'Sprache',type:'Typ',level:'Niveau',add:'Hinzufügen',premium:'Premium werden',premiumDesc:'Vollständiges Erlebnis freischalten.',upgrade:'Upgrade — €9/Monat →',saveInterests:'Interessen speichern',interestsDesc:'Wählen Sie Ihre Interessen.',coverTitle:'Cover auswählen',applyCover:'Anwenden',noBio:'Noch keine Bio.',noLangs:'Noch keine Sprachen.',memberSince:'Mitglied seit',native:'Muttersprache',learning:'Lernend'},
+  it:{title:'Il mio profilo',overview:'Panoramica',edit:'Modifica profilo',languages:'Lingue',addLang:'+ Aggiungi lingua',interests:'Interessi',personal:'Info personali',fname:'Nome',lname:'Cognome',username:'Nome utente',country:'Paese',about:'Su di me',save:'Salva',password:'Cambia password',newpw:'Nuova password',confirmpw:'Conferma',updatepw:'Aggiorna',lang:'Lingua',type:'Tipo',level:'Livello',add:'Aggiungi',premium:'Diventa Premium',premiumDesc:"Sblocca l'esperienza completa.",upgrade:'Upgrade — €9/mese →',saveInterests:'Salva interessi',interestsDesc:'Seleziona i tuoi interessi.',coverTitle:'Scegli una copertina',applyCover:'Applica',noBio:'Nessuna bio ancora.',noLangs:'Nessuna lingua aggiunta.',memberSince:'Membro dal',native:'Madrelingua',learning:'In apprendimento'},
+  pt:{title:'Meu Perfil',overview:'Visão geral',edit:'Editar perfil',languages:'Idiomas',addLang:'+ Adicionar idioma',interests:'Interesses',personal:'Informações pessoais',fname:'Nome',lname:'Sobrenome',username:'Nome de usuário',country:'País',about:'Sobre mim',save:'Salvar',password:'Alterar senha',newpw:'Nova senha',confirmpw:'Confirmar',updatepw:'Atualizar',lang:'Idioma',type:'Tipo',level:'Nível',add:'Adicionar',premium:'Seja Premium',premiumDesc:'Desbloqueie a experiência completa.',upgrade:'Upgrade — €9/mês →',saveInterests:'Salvar interesses',interestsDesc:'Selecione seus interesses.',coverTitle:'Escolher uma capa',applyCover:'Aplicar',noBio:'Sem bio ainda.',noLangs:'Nenhum idioma adicionado.',memberSince:'Membro desde',native:'Nativo',learning:'Aprendendo'},
+  ru:{title:'Мой профиль',overview:'Обзор',edit:'Редактировать',languages:'Языки',addLang:'+ Добавить язык',interests:'Интересы',personal:'Личная информация',fname:'Имя',lname:'Фамилия',username:'Имя пользователя',country:'Страна',about:'О себе',save:'Сохранить',password:'Изменить пароль',newpw:'Новый пароль',confirmpw:'Подтвердить',updatepw:'Обновить',lang:'Язык',type:'Тип',level:'Уровень',add:'Добавить',premium:'Стать Premium',premiumDesc:'Разблокируйте полный опыт.',upgrade:'Upgrade — €9/мес →',saveInterests:'Сохранить интересы',interestsDesc:'Выберите свои интересы.',coverTitle:'Выбрать обложку',applyCover:'Применить',noBio:'Нет биографии.',noLangs:'Языки не добавлены.',memberSince:'Участник с',native:'Родной',learning:'Изучаю'},
+  zh:{title:'我的资料',overview:'概览',edit:'编辑资料',languages:'语言',addLang:'+ 添加语言',interests:'兴趣',personal:'个人信息',fname:'名',lname:'姓',username:'用户名',country:'国家',about:'关于我',save:'保存',password:'修改密码',newpw:'新密码',confirmpw:'确认密码',updatepw:'更新',lang:'语言',type:'类型',level:'级别',add:'添加',premium:'升级Premium',premiumDesc:'解锁完整体验。',upgrade:'升级 — €9/月 →',saveInterests:'保存兴趣',interestsDesc:'选择您的兴趣。',coverTitle:'选择封面',applyCover:'应用',noBio:'还没有简介。',noLangs:'还没有添加语言。',memberSince:'会员自',native:'母语',learning:'学习中'},
+  ja:{title:'プロフィール',overview:'概要',edit:'プロフィール編集',languages:'言語',addLang:'+ 言語を追加',interests:'興味',personal:'個人情報',fname:'名',lname:'姓',username:'ユーザー名',country:'国',about:'自己紹介',save:'変更を保存',password:'パスワード変更',newpw:'新しいパスワード',confirmpw:'確認',updatepw:'更新',lang:'言語',type:'タイプ',level:'レベル',add:'追加',premium:'プレミアムになる',premiumDesc:'完全な体験を解放。',upgrade:'アップグレード — €9/月 →',saveInterests:'興味を保存',interestsDesc:'興味を選択してください。',coverTitle:'カバーを選ぶ',applyCover:'適用',noBio:'まだ自己紹介がありません。',noLangs:'まだ言語がありません。',memberSince:'メンバー',native:'ネイティブ',learning:'学習中'},
+  ar:{title:'ملفي الشخصي',overview:'نظرة عامة',edit:'تعديل الملف',languages:'اللغات',addLang:'+ إضافة لغة',interests:'الاهتمامات',personal:'معلومات شخصية',fname:'الاسم الأول',lname:'اسم العائلة',username:'اسم المستخدم',country:'البلد',about:'عني',save:'حفظ',password:'تغيير كلمة المرور',newpw:'كلمة مرور جديدة',confirmpw:'تأكيد',updatepw:'تحديث',lang:'اللغة',type:'النوع',level:'المستوى',add:'إضافة',premium:'احصل على Premium',premiumDesc:'افتح التجربة الكاملة.',upgrade:'ترقية — €9/شهر →',saveInterests:'حفظ الاهتمامات',interestsDesc:'اختر اهتماماتك.',coverTitle:'اختر غلافاً',applyCover:'تطبيق',noBio:'لا توجد سيرة ذاتية.',noLangs:'لم تتم إضافة لغات.',memberSince:'عضو منذ',native:'اللغة الأم',learning:'تعلم'},
+  id:{title:'Profil Saya',overview:'Ikhtisar',edit:'Edit Profil',languages:'Bahasa',addLang:'+ Tambah bahasa',interests:'Minat',personal:'Info Pribadi',fname:'Nama depan',lname:'Nama belakang',username:'Nama pengguna',country:'Negara',about:'Tentang saya',save:'Simpan',password:'Ubah kata sandi',newpw:'Kata sandi baru',confirmpw:'Konfirmasi',updatepw:'Perbarui',lang:'Bahasa',type:'Tipe',level:'Tingkat',add:'Tambah',premium:'Jadi Premium',premiumDesc:'Buka pengalaman penuh.',upgrade:'Upgrade — €9/bln →',saveInterests:'Simpan minat',interestsDesc:'Pilih minat Anda.',coverTitle:'Pilih sampul',applyCover:'Terapkan',noBio:'Belum ada bio.',noLangs:'Belum ada bahasa.',memberSince:'Anggota sejak',native:'Asli',learning:'Belajar'}
+};
+const langFlags = {en:'🇺🇸',es:'🇪🇸',fr:'🇫🇷',de:'🇩🇪',it:'🇮🇹',pt:'🇧🇷',ru:'🇷🇺',zh:'🇨🇳',ja:'🇯🇵',ar:'🇸🇦',id:'🇮🇩'};
+let currentLang = localStorage.getItem('lp_lang') || 'en';
+
+function t(k) { return (TR[currentLang] && TR[currentLang][k]) || TR.en[k] || k; }
+
+function applyTranslations() {
+  document.getElementById('lang-btn').textContent = langFlags[currentLang] || '🌐';
+  document.getElementById('topbar-title').textContent = t('title');
+  document.getElementById('tab-overview').textContent = t('overview');
+  document.getElementById('tab-edit').textContent = t('edit');
+  document.getElementById('btn-edit-profile').textContent = '✏️ ' + t('edit');
+  document.getElementById('card-languages-title').textContent = t('languages');
+  document.getElementById('btn-add-lang').textContent = t('addLang');
+  document.getElementById('card-langs-edit-title').textContent = t('languages');
+  document.getElementById('btn-add-lang2').textContent = t('addLang');
+  document.getElementById('card-interests-title').textContent = t('interests');
+  document.getElementById('interests-desc').textContent = t('interestsDesc');
+  document.getElementById('btn-save-interests').textContent = t('saveInterests');
+  document.getElementById('card-personal-title').textContent = t('personal');
+  document.getElementById('label-firstname').textContent = t('fname');
+  document.getElementById('label-lastname').textContent = t('lname');
+  document.getElementById('label-username').textContent = t('username');
+  document.getElementById('label-country').textContent = t('country');
+  document.getElementById('label-about').textContent = t('about');
+  document.getElementById('btn-save-basic').textContent = t('save');
+  document.getElementById('card-password-title').textContent = t('password');
+  document.getElementById('label-newpw').textContent = t('newpw');
+  document.getElementById('label-confirmpw').textContent = t('confirmpw');
+  document.getElementById('btn-update-pw').textContent = t('updatepw');
+  document.getElementById('label-lang').textContent = t('lang');
+  document.getElementById('label-type').textContent = t('type');
+  document.getElementById('label-level').textContent = t('level');
+  document.getElementById('btn-add').textContent = t('add');
+  document.getElementById('premium-title').textContent = t('premium');
+  document.getElementById('premium-desc').textContent = t('premiumDesc');
+  document.getElementById('btn-upgrade').textContent = t('upgrade');
+  document.getElementById('cover-title').textContent = t('coverTitle');
+  document.getElementById('btn-apply-cover').textContent = t('applyCover');
+  document.documentElement.lang = currentLang;
+  document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+}
+
+function toggleLangDropdown() {
+  document.getElementById('lang-dropdown').classList.toggle('open');
+}
+function setLang(l) {
+  currentLang = l;
+  localStorage.setItem('lp_lang', l);
+  document.getElementById('lang-dropdown').classList.remove('open');
+  applyTranslations();
+}
+document.addEventListener('click', e => { if(!e.target.closest('.lang-selector')) document.getElementById('lang-dropdown').classList.remove('open'); });
+
+// ── COVER PICKER ──────────────────────────────────────────────────────────────
+const covers = {
+  cities:[
+    {id:'tokyo',label:'Tokyo',bg:'linear-gradient(135deg,#1a1a2e,#0f3460)',img:'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400&q=70'},
+    {id:'paris',label:'Paris',bg:'linear-gradient(135deg,#2d1b69,#11998e)',img:'https://images.unsplash.com/photo-1431274172761-fca41d930114?w=400&q=70'},
+    {id:'nyc',label:'New York',bg:'linear-gradient(135deg,#0f0c29,#302b63)',img:'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=400&q=70'},
+    {id:'barcelona',label:'Barcelona',bg:'linear-gradient(135deg,#f7971e,#ffd200)',img:'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=400&q=70'},
+    {id:'kyoto',label:'Kyoto',bg:'linear-gradient(135deg,#f953c6,#b91d73)',img:'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=400&q=70'},
+    {id:'london',label:'London',bg:'linear-gradient(135deg,#141e30,#243b55)',img:'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&q=70'},
+    {id:'rome',label:'Rome',bg:'linear-gradient(135deg,#c94b4b,#4b134f)',img:'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400&q=70'},
+    {id:'dubai',label:'Dubai',bg:'linear-gradient(135deg,#f7971e,#ffd200)',img:'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=70'},
+    {id:'sydney',label:'Sydney',bg:'linear-gradient(135deg,#1a6091,#4fc3f7)',img:'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=400&q=70'},
+    {id:'istanbul',label:'Istanbul',bg:'linear-gradient(135deg,#373b44,#4286f4)',img:'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=400&q=70'},
+    {id:'beijing',label:'Beijing',bg:'linear-gradient(135deg,#c94b4b,#4b134f)',img:'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=400&q=70'},
+    {id:'rio',label:'Rio de Janeiro',bg:'linear-gradient(135deg,#134e5e,#71b280)',img:'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=400&q=70'},
+    {id:'amsterdam',label:'Amsterdam',bg:'linear-gradient(135deg,#141e30,#243b55)',img:'https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=400&q=70'},
+    {id:'cairo',label:'Cairo',bg:'linear-gradient(135deg,#c94b4b,#f7971e)',img:'https://images.unsplash.com/photo-1553913861-c0fddf2619ee?w=400&q=70'},
+    {id:'singapore',label:'Singapore',bg:'linear-gradient(135deg,#0f0c29,#302b63)',img:'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400&q=70'},
+    {id:'berlin',label:'Berlin',bg:'linear-gradient(135deg,#373b44,#4286f4)',img:'https://images.unsplash.com/photo-1560969184-10fe8719e047?w=400&q=70'},
+    {id:'mumbai',label:'Mumbai',bg:'linear-gradient(135deg,#f953c6,#b91d73)',img:'https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?w=400&q=70'},
+    {id:'moscow',label:'Moscow',bg:'linear-gradient(135deg,#1a1a2e,#0f3460)',img:'https://images.unsplash.com/photo-1513326738677-b964603b136d?w=400&q=70'},
+  ],
+  nature:[
+    {id:'forest',label:'Forest',bg:'linear-gradient(135deg,#134e5e,#71b280)',img:'https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&q=70'},
+    {id:'ocean',label:'Ocean',bg:'linear-gradient(135deg,#1a6091,#4fc3f7)',img:'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=400&q=70'},
+    {id:'mountains',label:'Mountains',bg:'linear-gradient(135deg,#373b44,#4286f4)',img:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&q=70'},
+    {id:'sunset',label:'Sunset',bg:'linear-gradient(135deg,#f7971e,#ffd200)',img:'https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?w=400&q=70'},
+    {id:'desert',label:'Desert',bg:'linear-gradient(135deg,#c94b4b,#4b134f)',img:'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=400&q=70'},
+    {id:'aurora',label:'Aurora',bg:'linear-gradient(135deg,#0f2027,#203a43)',img:'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400&q=70'},
+  ],
+  colors:[]
+};
+
+let selectedCoverData = null;
+
+function renderCoverGrids() {
+  ['cities','nature'].forEach(cat => {
+    const el = document.getElementById('cg-' + cat);
+    if (!el) return;
+    el.innerHTML = covers[cat].map(c => {
+      const style = 'background:' + c.bg + ';' + (c.img ? 'background-image:url(' + c.img + ');background-size:cover;background-position:center;' : '');
+      return '<div class="cover-opt" style="' + style + '" onclick="selectCover(this,\'' + c.bg + '\',\'' + (c.img||'') + '\')">' +
+        '<div class="cover-opt-label">' + c.label + '</div></div>';
+    }).join('');
+  });
+}
+
+function selectCover(el, bg, img) {
+  document.querySelectorAll('.cover-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedCoverData = {bg, img};
+  const cover = document.getElementById('profile-cover');
+  cover.style.background = bg;
+  if (img) { cover.style.backgroundImage = 'url(' + img + ')'; cover.style.backgroundSize = 'cover'; cover.style.backgroundPosition = 'center'; }
+  else { cover.style.backgroundImage = 'none'; }
+}
+
+function openCoverPicker() { renderCoverGrids(); document.getElementById('cover-modal').classList.add('open'); }
+function closeCoverPicker() { document.getElementById('cover-modal').classList.remove('open'); }
+
+async function saveCover() {
+  if (!selectedCoverData) { closeCoverPicker(); return; }
+  const coverJson = JSON.stringify(selectedCoverData);
+  await window.supabaseClient.from('users').update({ cover_url: coverJson }).eq('id', currentUser.id);
+  closeCoverPicker();
+  showToast('✓ Cover saved!');
+}
+
+function applyCoverFromDB(coverJson) {
+  if (!coverJson) return;
+  try {
+    const d = JSON.parse(coverJson);
+    const cover = document.getElementById('profile-cover');
+    cover.style.background = d.bg;
+    if (d.img) { cover.style.backgroundImage = 'url(' + d.img + ')'; cover.style.backgroundSize = 'cover'; cover.style.backgroundPosition = 'center'; }
+  } catch(e) {}
+}
+
+// ── CORE FUNCTIONS ────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('save-toast');
+  t.textContent = msg || '✓ Saved!';
+  t.style.opacity = '1';
+  setTimeout(() => t.style.opacity = '0', 2500);
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+}
+
+function memberSince(dateStr) {
+  return new Date(dateStr).toLocaleDateString('en-US', {month:'short', year:'numeric'});
+}
+
+function fillUI(user, profile) {
+  const firstName = profile?.first_name || user.email.split('@')[0];
+  const lastName  = profile?.last_name  || '';
+  const fullName  = [firstName, lastName].filter(Boolean).join(' ');
+  const username  = profile?.username   || user.email.split('@')[0];
+  const country   = profile?.country    || '';
+  const bio       = profile?.bio        || '';
+  const plan      = profile?.plan       || 'free';
+  const photoUrl  = profile?.photo_url  || null;
+  const interests = profile?.interests  || [];
+
+  document.getElementById('hero-name').textContent = fullName;
+  document.getElementById('hero-handle').textContent = '@' + username + ' · ' + t('memberSince') + ' ' + memberSince(user.created_at);
+  document.getElementById('hero-country').textContent = country ? '📍 ' + country : '';
+  document.getElementById('hero-plan').textContent = plan !== 'free' ? '⭐ Premium' : '';
+  document.getElementById('hero-bio').textContent = bio || t('noBio');
+
+  const avatarEl = document.getElementById('profile-avatar-el');
+  if (photoUrl) avatarEl.innerHTML = '<img src="' + photoUrl + '" alt="avatar">';
+  else avatarEl.textContent = profile?.avatar_emoji || '🧑';
+
+  const sidebarAv = document.getElementById('sidebar-avatar');
+  if (photoUrl) sidebarAv.innerHTML = '<img src="' + photoUrl + '" alt="avatar">';
+  else sidebarAv.textContent = profile?.avatar_emoji || '🧑';
+
+  document.getElementById('sidebar-name').textContent = fullName;
+  document.getElementById('sidebar-plan').textContent = plan === 'premium' ? '⭐ Premium' : plan === 'teacher' ? '🎓 Teacher' : 'Free plan';
+
+  if (plan !== 'free') {
+    const card = document.getElementById('premium-upgrade-card');
+    if (card) card.style.display = 'none';
+  }
+
+  const heroInterests = document.getElementById('hero-interests');
+  heroInterests.innerHTML = interests.length ? interests.map(i => '<span class="tag">' + i + '</span>').join('') : '';
+
+  document.querySelectorAll('.interest-btn').forEach(btn => {
+    btn.classList.toggle('active', interests.includes(btn.dataset.val));
+  });
+
+  document.getElementById('edit-first-name').value = profile?.first_name || '';
+  document.getElementById('edit-last-name').value  = profile?.last_name  || '';
+  document.getElementById('edit-username').value   = username;
+  document.getElementById('edit-bio').value        = bio;
+
+  const countryEl = document.getElementById('edit-country');
+  if (countryEl && country) {
+    [...countryEl.options].forEach(o => { if (o.text === country || o.value === country) o.selected = true; });
+  }
+
+  if (profile?.cover_url) applyCoverFromDB(profile.cover_url);
+}
+
+function renderLanguages(langs) {
+  const ovEl = document.getElementById('overview-langs');
+  const editEl = document.getElementById('edit-langs-list');
+  if (!langs.length) {
+    const msg = '<div style="color:var(--muted);font-size:.875rem;">' + t('noLangs') + '</div>';
+    ovEl.innerHTML = msg;
+    editEl.innerHTML = '<div style="color:var(--muted);font-size:.875rem;margin-bottom:12px;">' + t('noLangs') + '</div>';
+    return;
+  }
+  const html = langs.map((l, i) =>
+    '<div class="lang-item">' +
+    '<span class="lang-flag">' + (l.flag || '🌐') + '</span>' +
+    '<div class="lang-info"><div class="lang-name">' + l.language + '</div><div class="lang-level">' + l.level + '</div></div>' +
+    '<span class="lang-badge ' + (l.type === 'native' ? 'badge-native' : 'badge-learning') + '">' + (l.type === 'native' ? t('native') : t('learning')) + '</span>' +
+    '<button class="remove-btn" onclick="removeLanguage(' + i + ')">✕</button>' +
+    '</div>'
+  ).join('');
+  ovEl.innerHTML = html;
+  editEl.innerHTML = html;
+}
+
+async function addLanguage() {
+  const langEl = document.getElementById('new-lang-name');
+  const typeEl = document.getElementById('new-lang-type');
+  const levelEl = document.getElementById('new-lang-level');
+  const langName = langEl.value;
+  if (!langName) { alert('Please select a language'); return; }
+  const flag = flagMap[langName] || '🌐';
+  userLanguages.push({ language: langName, flag, type: typeEl.value, level: levelEl.value });
+  const { error } = await window.supabaseClient.from('users').update({ native_lang: JSON.stringify(userLanguages) }).eq('id', currentUser.id);
+  if (error) { alert('Error: ' + error.message); return; }
+  renderLanguages(userLanguages);
+  document.getElementById('add-lang-form').classList.remove('open');
+  langEl.value = '';
+  showToast('✓ Language added!');
+}
+
+async function removeLanguage(index) {
+  userLanguages.splice(index, 1);
+  const { error } = await window.supabaseClient.from('users').update({ native_lang: JSON.stringify(userLanguages) }).eq('id', currentUser.id);
+  if (error) { alert('Error: ' + error.message); return; }
+  renderLanguages(userLanguages);
+  showToast('✓ Language removed!');
+}
+
+async function saveBasicInfo() {
+  const firstName = document.getElementById('edit-first-name').value.trim();
+  const lastName  = document.getElementById('edit-last-name').value.trim();
+  const username  = document.getElementById('edit-username').value.trim();
+  const bioRaw    = document.getElementById('edit-bio').value.trim();
+  const bio = bioRaw
+    .replace(/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g, '***')
+    .replace(/(\+?\d[\s\-.]?){7,15}/g, '***')
+    .replace(/(wa\.me|whatsapp|telegram|t\.me|instagram|ig:|snap:|wechat|discord|skype)/gi, '***');
+  if (bio !== bioRaw) alert('Contact info removed from bio for security.');
+  const countryEl = document.getElementById('edit-country');
+  const country = countryEl.options[countryEl.selectedIndex].text;
+  const { error } = await window.supabaseClient.from('users').update({ first_name: firstName, last_name: lastName, username, bio, country }).eq('id', currentUser.id);
+  if (error) { alert('Error: ' + error.message); return; }
+  const { data: profile } = await window.supabaseClient.from('users').select('*').eq('id', currentUser.id).single();
+  fillUI(currentUser, profile);
+  showToast('✓ ' + t('save') + '!');
+}
+
+async function saveInterests() {
+  const interests = Array.from(document.querySelectorAll('.interest-btn.active')).map(b => b.dataset.val);
+  const { error } = await window.supabaseClient.from('users').update({ interests }).eq('id', currentUser.id);
+  if (error) { alert('Error: ' + error.message); return; }
+  document.getElementById('hero-interests').innerHTML = interests.map(i => '<span class="tag">' + i + '</span>').join('');
+  showToast('✓ ' + t('saveInterests') + '!');
+}
+
+async function changePassword() {
+  const pw = document.getElementById('new-password').value;
+  const pw2 = document.getElementById('confirm-password').value;
+  if (pw.length < 6) { alert('Password must be at least 6 characters'); return; }
+  if (pw !== pw2) { alert('Passwords do not match'); return; }
+  const { error } = await window.supabaseClient.auth.updateUser({ password: pw });
+  if (error) { alert('Error: ' + error.message); return; }
+  document.getElementById('new-password').value = '';
+  document.getElementById('confirm-password').value = '';
+  showToast('✓ Password updated!');
+}
+
+async function uploadAvatar(input) {
+  const file = input.files[0];
+  if (!file || file.size > 5*1024*1024) { alert('Image must be under 5MB'); return; }
+  const ext = file.name.split('.').pop();
+  const path = currentUser.id + '/avatar.' + ext;
+  const avatarEl = document.getElementById('profile-avatar-el');
+  avatarEl.style.opacity = '0.5';
+  const { error: uploadError } = await window.supabaseClient.storage.from('avatars').upload(path, file, { upsert: true });
+  if (uploadError) { alert('Error: ' + uploadError.message); avatarEl.style.opacity = '1'; return; }
+  const { data: { publicUrl } } = window.supabaseClient.storage.from('avatars').getPublicUrl(path);
+  await window.supabaseClient.from('users').update({ photo_url: publicUrl }).eq('id', currentUser.id);
+  avatarEl.innerHTML = '<img src="' + publicUrl + '" alt="avatar">';
+  avatarEl.style.opacity = '1';
+  document.getElementById('sidebar-avatar').innerHTML = '<img src="' + publicUrl + '" alt="avatar">';
+  showToast('✓ Photo updated!');
+}
+
+async function logout() {
+  await window.supabaseClient.auth.signOut();
+  window.location.href = 'register.html';
+}
+
+// ── BOOT ──────────────────────────────────────────────────────────────────────
+applyTranslations();
+let redirected = false;
+window.supabaseClient.auth.onAuthStateChange(async (event, session) => {
+  if (redirected) return;
+  if (event === 'INITIAL_SESSION') {
+    if (!session) { redirected = true; window.location.href = 'register.html'; return; }
+    currentUser = session.user;
+    const { data: profile } = await window.supabaseClient.from('users').select('*').eq('id', currentUser.id).single();
+    fillUI(currentUser, profile);
+    applyTranslations();
+    try { userLanguages = profile?.native_lang ? JSON.parse(profile.native_lang) : []; } catch(e) { userLanguages = []; }
+    renderLanguages(userLanguages);
+  }
+  if (event === 'SIGNED_OUT') { redirected = true; window.location.href = 'register.html'; }
+});
+</script>
+</body>
+</html>

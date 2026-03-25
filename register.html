@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LingoPair — Join Free</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#F7F5F0; --white:#FFFFFF; --ink:#1A1814; --ink2:#2d2a25;
+  --muted:#8A8680; --border:#E2DDD6; --accent:#2D5BE3;
+  --accent-h:#1e49c4; --accent-l:#EEF2FD; --gold:#C8A96E;
+  --green:#22c55e; --green-l:#dcfce7; --green-d:#16a34a;
+  --red:#ef4444; --red-l:#fee2e2; --radius:14px; --radius-lg:22px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;display:grid;grid-template-columns:1fr 1fr;}
+
+.left-panel{background:var(--ink);color:var(--white);padding:48px 52px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow:hidden;}
+.left-logo{font-family:'DM Serif Display',serif;font-size:1.4rem;letter-spacing:-.01em;text-decoration:none;color:var(--white);display:block;margin-bottom:auto;}
+.left-logo sup{font-family:'DM Sans',sans-serif;font-size:.5rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);vertical-align:super;margin-left:2px;}
+.left-headline{font-family:'DM Serif Display',serif;font-size:clamp(2rem,3.2vw,3rem);line-height:1.08;letter-spacing:-.03em;margin-bottom:20px;}
+.left-headline em{font-style:italic;color:rgba(200,169,110,0.9);}
+.left-sub{font-size:.95rem;color:rgba(255,255,255,.5);line-height:1.75;font-weight:300;max-width:340px;margin-bottom:40px;}
+.social-proof{display:flex;flex-direction:column;gap:14px;}
+.proof-item{display:flex;align-items:flex-start;gap:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:16px;}
+.proof-avatar{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.proof-text p{font-size:.82rem;color:rgba(255,255,255,.7);font-style:italic;line-height:1.6;margin-bottom:5px;}
+.proof-meta{font-size:.72rem;color:rgba(255,255,255,.35);}
+.stars{color:var(--gold);letter-spacing:2px;font-size:.72rem;}
+.floating-flags{position:absolute;bottom:48px;right:52px;display:flex;gap:8px;opacity:.4;font-size:1.5rem;}
+
+.right-panel{display:flex;flex-direction:column;padding:48px 52px;overflow-y:auto;min-height:100vh;}
+.right-panel-inner{max-width:440px;width:100%;margin:auto;}
+.tab-switcher{display:flex;background:var(--white);border:1px solid var(--border);border-radius:50px;padding:4px;margin-bottom:36px;}
+.tab-btn{flex:1;padding:9px;border-radius:50px;font-size:.875rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:inherit;transition:all .2s;}
+.tab-btn.active{background:var(--ink);color:var(--white);}
+.form-section{display:none;}
+.form-section.active{display:block;animation:fadeUp .35s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.form-header{margin-bottom:32px;}
+.form-header h2{font-family:'DM Serif Display',serif;font-size:1.8rem;letter-spacing:-.03em;margin-bottom:6px;}
+.form-header p{font-size:.875rem;color:var(--muted);font-weight:300;}
+.form-label{display:block;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px;}
+.form-input,.form-select{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:.9rem;background:var(--white);color:var(--ink);transition:border-color .2s,box-shadow .2s;outline:none;}
+.form-input:focus,.form-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,91,227,.1);}
+.form-select{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A8680' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+.form-group{margin-bottom:18px;}
+.form-hint{font-size:.75rem;color:var(--muted);margin-top:5px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.lang-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;}
+.lang-option{border:1.5px solid var(--border);border-radius:var(--radius);padding:12px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .15s;background:var(--white);}
+.lang-option:hover{border-color:var(--accent);background:var(--accent-l);}
+.lang-option.selected{border-color:var(--accent);background:var(--accent-l);}
+.lang-option .flag{font-size:1.3rem;}
+.lang-option .name{font-size:.82rem;font-weight:500;}
+.lang-option .check{margin-left:auto;color:var(--accent);opacity:0;font-size:.8rem;}
+.lang-option.selected .check{opacity:1;}
+.level-options{display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;}
+.level-btn{padding:7px 14px;border-radius:50px;border:1.5px solid var(--border);font-size:.8rem;font-weight:500;cursor:pointer;background:var(--white);color:var(--muted);font-family:inherit;transition:all .15s;}
+.level-btn:hover{border-color:var(--ink);color:var(--ink);}
+.level-btn.active{background:var(--ink);color:var(--white);border-color:var(--ink);}
+.divider{display:flex;align-items:center;gap:14px;margin:22px 0;color:var(--muted);font-size:.8rem;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.social-login{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;}
+.social-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:var(--radius);border:1.5px solid var(--border);background:var(--white);font-size:.85rem;font-weight:500;cursor:pointer;font-family:inherit;transition:all .2s;color:var(--ink);text-decoration:none;}
+.social-btn:hover{border-color:var(--ink);background:var(--bg);}
+.social-icon{width:18px;height:18px;}
+.btn-submit{width:100%;padding:13px;background:var(--ink);color:var(--white);border:none;border-radius:50px;font-size:.95rem;font-weight:500;cursor:pointer;font-family:inherit;transition:all .2s;box-shadow:0 4px 16px rgba(26,24,20,.2);}
+.btn-submit:hover{background:var(--ink2);transform:translateY(-1px);box-shadow:0 8px 24px rgba(26,24,20,.22);}
+.terms{font-size:.75rem;color:var(--muted);text-align:center;margin-top:16px;line-height:1.6;}
+.terms a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;}
+.steps-indicator{display:flex;align-items:center;gap:8px;margin-bottom:32px;}
+.step-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .2s;}
+.step-dot.done{background:var(--green);width:20px;border-radius:20px;}
+.step-dot.active{background:var(--accent);width:20px;border-radius:20px;}
+.steps-label{font-size:.75rem;color:var(--muted);margin-left:8px;}
+.pw-strength{margin-top:8px;display:flex;gap:4px;align-items:center;}
+.pw-bar{flex:1;height:3px;border-radius:3px;background:var(--border);transition:background .3s;}
+.pw-bar.weak{background:#ef4444;}
+.pw-bar.fair{background:var(--gold);}
+.pw-bar.strong{background:var(--green);}
+.pw-label{font-size:.72rem;color:var(--muted);margin-left:8px;min-width:40px;}
+.avatar-picker{display:flex;gap:10px;margin-top:4px;flex-wrap:wrap;}
+.avatar-opt{width:48px;height:48px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.4rem;cursor:pointer;transition:all .15s;}
+.avatar-opt:hover{border-color:var(--accent);transform:scale(1.08);}
+.avatar-opt.selected{border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,91,227,.15);}
+.success-screen{display:none;text-align:center;padding:40px 0;animation:fadeUp .4s ease both;}
+.success-screen.active{display:block;}
+.success-icon{width:72px;height:72px;background:var(--green-l);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 20px;}
+.success-screen h2{font-family:'DM Serif Display',serif;font-size:1.8rem;letter-spacing:-.03em;margin-bottom:10px;}
+.success-screen p{font-size:.9rem;color:var(--muted);font-weight:300;line-height:1.75;margin-bottom:28px;}
+@media(max-width:900px){body{grid-template-columns:1fr;}.left-panel{display:none;}.right-panel{padding:32px 24px;}.right-panel-inner{max-width:100%;}}
+</style>
+</head>
+<body>
+
+<div class="left-panel">
+  <a href="index.html" class="left-logo">LingoPair<sup>Beta</sup></a>
+  <div style="margin-bottom:32px;"></div>
+  <h2 class="left-headline">The world's<br>most <em>connected</em><br>language exchange</h2>
+  <p class="left-sub">Join 4 million learners practicing real conversation with native speakers from 178 countries.</p>
+  <div class="social-proof">
+    <div class="proof-item">
+      <div class="proof-avatar">👩</div>
+      <div class="proof-text">
+        <div class="stars">★★★★★</div>
+        <p>"In 3 months my English improved more than in 2 years of classes."</p>
+        <span class="proof-meta">María G. · México</span>
+      </div>
+    </div>
+    <div class="proof-item">
+      <div class="proof-avatar">👨</div>
+      <div class="proof-text">
+        <div class="stars">★★★★★</div>
+        <p>"As a teacher, I earn a real side income. Easy to use, payments on time."</p>
+        <span class="proof-meta">Carlos R. · Colombia</span>
+      </div>
+    </div>
+    <div class="proof-item">
+      <div class="proof-avatar">👩</div>
+      <div class="proof-text">
+        <div class="stars">★★★★★</div>
+        <p>"Found my perfect partner on day one. The algorithm is genuinely impressive."</p>
+        <span class="proof-meta">Emma W. · United Kingdom</span>
+      </div>
+    </div>
+  </div>
+  <div class="floating-flags">🇺🇸 🇯🇵 🇫🇷 🇧🇷 🇩🇪 🇰🇷 🇮🇹</div>
+</div>
+
+<div class="right-panel">
+  <div class="right-panel-inner">
+    <div class="tab-switcher">
+      <button class="tab-btn active" onclick="switchTab('signup')">Create account</button>
+      <button class="tab-btn" onclick="switchTab('login')">Sign in</button>
+    </div>
+
+    <!-- SIGN UP -->
+    <div class="form-section active" id="signup-form">
+      <div id="step1" class="step-panel">
+        <div class="steps-indicator">
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div>
+          <div class="step-dot"></div>
+          <span class="steps-label">Step 1 of 3 — Account</span>
+        </div>
+        <div class="form-header">
+          <h2>Create your account</h2>
+          <p>Start learning for free. No credit card required.</p>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First name</label>
+            <input type="text" class="form-input" id="first-name" placeholder="Ana">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last name</label>
+            <input type="text" class="form-input" id="last-name" placeholder="García">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email address</label>
+          <input type="email" class="form-input" id="signup-email" placeholder="ana@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="signup-password" placeholder="Min. 8 characters" oninput="checkPw(this.value)">
+          <div class="pw-strength">
+            <div class="pw-bar" id="bar1"></div>
+            <div class="pw-bar" id="bar2"></div>
+            <div class="pw-bar" id="bar3"></div>
+            <span class="pw-label" id="pw-label"></span>
+          </div>
+        </div>
+        <button class="btn-submit" onclick="goStep(2)">Continue →</button>
+        <p class="terms">By creating an account you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
+      </div>
+
+      <div id="step2" class="step-panel" style="display:none;">
+        <div class="steps-indicator">
+          <div class="step-dot done"></div>
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div>
+          <span class="steps-label">Step 2 of 3 — Languages</span>
+        </div>
+        <div class="form-header">
+          <h2>Your languages</h2>
+          <p>Tell us what you speak and what you want to learn.</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">I speak natively</label>
+          <div class="lang-grid">
+            <div class="lang-option selected" onclick="selectLang(this)"><span class="flag">🇪🇸</span><span class="name">Spanish</span><span class="check">✓</span></div>
+            <div class="lang-option" onclick="selectLang(this)"><span class="flag">🇺🇸</span><span class="name">English</span><span class="check">✓</span></div>
+            <div class="lang-option" onclick="selectLang(this)"><span class="flag">🇫🇷</span><span class="name">French</span><span class="check">✓</span></div>
+            <div class="lang-option" onclick="selectLang(this)"><span class="flag">🇩🇪</span><span class="name">German</span><span class="check">✓</span></div>
+            <div class="lang-option" onclick="selectLang(this)"><span class="flag">🇧🇷</span><span class="name">Portuguese</span><span class="check">✓</span></div>
+            <div class="lang-option" onclick="selectLang(this)"><span class="flag">⊕</span><span class="name">Other</span><span class="check">✓</span></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">I want to learn</label>
+          <div class="lang-grid">
+            <div class="lang-option" onclick="selectLearn(this)"><span class="flag">🇺🇸</span><span class="name">English</span><span class="check">✓</span></div>
+            <div class="lang-option selected" onclick="selectLearn(this)"><span class="flag">🇯🇵</span><span class="name">Japanese</span><span class="check">✓</span></div>
+            <div class="lang-option" onclick="selectLearn(this)"><span class="flag">🇫🇷</span><span class="name">French</span><span class="check">✓</span></div>
+            <div class="lang-option" onclick="selectLearn(this)"><span class="flag">🇰🇷</span><span class="name">Korean</span><span class="check">✓</span></div>
+            <div class="lang-option" onclick="selectLearn(this)"><span class="flag">🇨🇳</span><span class="name">Mandarin</span><span class="check">✓</span></div>
+            <div class="lang-option" onclick="selectLearn(this)"><span class="flag">⊕</span><span class="name">Other</span><span class="check">✓</span></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">My current level</label>
+          <div class="level-options">
+            <button class="level-btn" onclick="selectLevel(this)">Beginner</button>
+            <button class="level-btn active" onclick="selectLevel(this)">Elementary</button>
+            <button class="level-btn" onclick="selectLevel(this)">Intermediate</button>
+            <button class="level-btn" onclick="selectLevel(this)">Advanced</button>
+            <button class="level-btn" onclick="selectLevel(this)">Near-native</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-submit" style="background:var(--bg);color:var(--ink);border:1.5px solid var(--border);box-shadow:none;flex:0 0 auto;padding:13px 20px;" onclick="goStep(1)">← Back</button>
+          <button class="btn-submit" style="flex:1;" onclick="goStep(3)">Continue →</button>
+        </div>
+      </div>
+
+      <div id="step3" class="step-panel" style="display:none;">
+        <div class="steps-indicator">
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot active"></div>
+          <span class="steps-label">Step 3 of 3 — Profile</span>
+        </div>
+        <div class="form-header">
+          <h2>Set up your profile</h2>
+          <p>Help others find you. You can edit this anytime.</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Choose an avatar</label>
+          <div class="avatar-picker">
+            <div class="avatar-opt selected" onclick="selectAvatar(this)">🧑</div>
+            <div class="avatar-opt" onclick="selectAvatar(this)">👩</div>
+            <div class="avatar-opt" onclick="selectAvatar(this)">👨</div>
+            <div class="avatar-opt" onclick="selectAvatar(this)">🧑‍🎓</div>
+            <div class="avatar-opt" onclick="selectAvatar(this)">👩‍💻</div>
+            <div class="avatar-opt" onclick="selectAvatar(this)">🧑‍🏫</div>
+            <div class="avatar-opt" onclick="selectAvatar(this)">👩‍🎨</div>
+            <div class="avatar-opt" onclick="selectAvatar(this)">🧑‍🚀</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Country</label>
+          <select class="form-input form-select" id="signup-country">
+            <option>🇲🇽 Mexico</option>
+            <option>🇺🇸 United States</option>
+            <option>🇪🇸 Spain</option>
+            <option>🇧🇷 Brazil</option>
+            <option>🇦🇷 Argentina</option>
+            <option>🇨🇴 Colombia</option>
+            <option>Other...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">About me <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted)">(optional)</span></label>
+          <textarea class="form-input" id="signup-bio" style="resize:vertical;min-height:90px;" placeholder="Tell potential partners a bit about yourself..."></textarea>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-submit" style="background:var(--bg);color:var(--ink);border:1.5px solid var(--border);box-shadow:none;flex:0 0 auto;padding:13px 20px;" onclick="goStep(2)">← Back</button>
+          <button class="btn-submit" style="flex:1;" onclick="completeSignup()">Create my account →</button>
+        </div>
+      </div>
+
+      <div class="success-screen" id="success-screen">
+        <div class="success-icon">🎉</div>
+        <h2>Welcome to LingoPair!</h2>
+        <p>Check your email to confirm your account, then sign in to get started.</p>
+        <button class="btn-submit" onclick="switchTab('login')">Go to Sign in →</button>
+      </div>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="form-section" id="login-form">
+      <div class="form-header">
+        <h2>Welcome back</h2>
+        <p>Sign in to continue your language journey.</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email address</label>
+        <input type="email" class="form-input" id="login-email" placeholder="ana@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-input" id="login-password" placeholder="Your password">
+        <div class="form-hint" style="text-align:right;"><a href="#" onclick="forgotPassword();return false;" style="color:var(--accent);text-decoration:none;font-size:.78rem;">Forgot password?</a></div>
+      </div>
+      <button class="btn-submit" onclick="loginUser()">Sign in →</button>
+      <p class="terms" style="margin-top:18px;">Don't have an account? <a href="#" onclick="switchTab('signup');return false;">Create one free →</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- Supabase — SIEMPRE al final del body -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  window.supabaseClient = supabase.createClient(
+    'https://kzwptgbhcddebxdfnsqx.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6d3B0Z2JoY2RkZWJ4ZGZuc3F4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4Mjk0NzksImV4cCI6MjA4OTQwNTQ3OX0.9ulqg6eSaH2ONzn4yD3wi6ymQ-aShjx_7nMJuOt3Rps'
+  );
+</script>
+<script>
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', (i===0&&tab==='signup')||(i===1&&tab==='login')));
+  document.getElementById('signup-form').classList.toggle('active', tab==='signup');
+  document.getElementById('login-form').classList.toggle('active', tab==='login');
+}
+
+function goStep(n) {
+  document.querySelectorAll('.step-panel').forEach(p => p.style.display='none');
+  const el = document.getElementById('step'+n);
+  if(el){ el.style.display='block'; el.style.animation='none'; el.offsetHeight; el.style.animation='fadeUp .35s ease both'; }
+}
+
+function checkPw(val) {
+  const bars = [document.getElementById('bar1'),document.getElementById('bar2'),document.getElementById('bar3')];
+  const label = document.getElementById('pw-label');
+  bars.forEach(b => { b.className='pw-bar'; });
+  if(val.length===0){label.textContent='';return;}
+  if(val.length<6){bars[0].classList.add('weak');label.textContent='Weak';label.style.color='#ef4444';}
+  else if(val.length<10){bars[0].classList.add('fair');bars[1].classList.add('fair');label.textContent='Fair';label.style.color='var(--gold)';}
+  else{bars[0].classList.add('strong');bars[1].classList.add('strong');bars[2].classList.add('strong');label.textContent='Strong';label.style.color='var(--green-d)';}
+}
+
+function selectLang(el) {
+  el.closest('.lang-grid').querySelectorAll('.lang-option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function selectLearn(el) { selectLang(el); }
+
+function selectLevel(el) {
+  el.closest('.level-options').querySelectorAll('.level-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function selectAvatar(el) {
+  el.closest('.avatar-picker').querySelectorAll('.avatar-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+async function loginUser() {
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+
+  if (!email || !password) {
+    alert('Por favor introduce tu email y contraseña');
+    return;
+  }
+
+  const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+    email: email,
+    password: password
+  });
+
+  if (error) {
+    alert('Email o contraseña incorrectos');
+    return;
+  }
+
+  window.location.href = 'dashboard.html';
+}
+
+async function completeSignup() {
+  const email     = document.getElementById('signup-email').value.trim();
+  const password  = document.getElementById('signup-password').value;
+  const firstName = document.getElementById('first-name').value.trim();
+  const lastName  = document.getElementById('last-name').value.trim();
+  const avatar    = document.querySelector('.avatar-opt.selected')?.textContent || '🧑';
+  const countryEl = document.getElementById('signup-country');
+  const country   = countryEl ? countryEl.options[countryEl.selectedIndex].text.replace(/^\S+\s/, '') : '';
+  const nativeLang  = document.querySelector('#step2 .lang-grid:first-of-type .lang-option.selected .name')?.textContent || '';
+  const learnLang   = document.querySelector('#step2 .lang-grid:last-of-type .lang-option.selected .name')?.textContent || '';
+  const level       = document.querySelector('.level-btn.active')?.textContent || '';
+  const bio         = document.getElementById('signup-bio')?.value.trim() || '';
+
+  if (!email || !password) {
+    alert('Please enter your email and password');
+    return;
+  }
+  if (password.length < 6) {
+    alert('Password must be at least 6 characters');
+    return;
+  }
+
+  // Deshabilitar botón durante el proceso
+  const btn = document.querySelector('#step3 .btn-submit:last-child');
+  if (btn) { btn.textContent = 'Creating account…'; btn.disabled = true; }
+
+  const { data, error } = await window.supabaseClient.auth.signUp({
+    email,
+    password,
+    options: {
+      data: { first_name: firstName, last_name: lastName }
+    }
+  });
+
+  if (error) {
+    alert('Error: ' + error.message);
+    if (btn) { btn.textContent = 'Create my account →'; btn.disabled = false; }
+    return;
+  }
+
+  // Guardar perfil completo en la tabla users
+  await window.supabaseClient.from('users').insert({
+    id:           data.user.id,
+    plan:         'free',
+    first_name:   firstName,
+    last_name:    lastName,
+    avatar:       avatar,
+    country:      country,
+    native_lang:  nativeLang,
+    learn_lang:   learnLang,
+    level:        level,
+    bio:          bio
+  });
+
+  document.querySelectorAll('.step-panel').forEach(p => p.style.display = 'none');
+  document.getElementById('success-screen').classList.add('active');
+}
+
+function showResetForm() {
+  document.getElementById('signup-form').classList.remove('active');
+  document.getElementById('login-form').classList.remove('active');
+  document.getElementById('reset-form').classList.add('active');
+}
+
+async function forgotPassword() {
+  const email = document.getElementById('login-email').value.trim();
+  if (!email) { alert('Please enter your email address first'); return; }
+  const { error } = await window.supabaseClient.auth.resetPasswordForEmail(email, {
+    redirectTo: 'https://joinlingopair.com/reset-password.html'
+  });
+  if (error) { alert('Error: ' + error.message); }
+  else { alert('✅ Check your email for the password reset link!'); }
+}
+
+async function updatePassword() {
+  const pw = document.getElementById('reset-password').value;
+  const pw2 = document.getElementById('reset-password-confirm').value;
+  if (pw.length < 6) { alert('Password must be at least 6 characters'); return; }
+  if (pw !== pw2) { alert('Passwords do not match'); return; }
+  const { error } = await window.supabaseClient.auth.updateUser({ password: pw });
+  if (error) { alert('Error: ' + error.message); return; }
+  alert('✅ Password updated! Please sign in.');
+  switchTab('login');
+}
+
+window.supabaseClient.auth.onAuthStateChange((event) => {
+  if (event === 'PASSWORD_RECOVERY') showResetForm();
+});
+</script>
+</body>
+</html>

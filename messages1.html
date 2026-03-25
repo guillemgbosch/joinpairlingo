@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LingoPair — Messages</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗣️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F5F0;--white:#FFFFFF;--ink:#1A1814;--ink2:#2d2a25;--muted:#8A8680;--border:#E2DDD6;--accent:#2D5BE3;--accent-l:#EEF2FD;--gold:#C8A96E;--green:#22c55e;--green-l:#dcfce7;--green-d:#16a34a;--sidebar-w:232px;--radius:14px;--radius-lg:22px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+.app{display:grid;grid-template-columns:var(--sidebar-w) 1fr;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sidebar-logo{padding:20px 18px 16px;border-bottom:1px solid var(--border);font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--ink);display:block;cursor:default;}
+.sidebar-logo sup{font-family:'DM Sans',sans-serif;font-size:.5rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);vertical-align:super;margin-left:2px;}
+.sidebar-nav{flex:1;padding:12px 10px;}
+.nav-section{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:14px 8px 5px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;font-size:.875rem;color:var(--muted);text-decoration:none;cursor:pointer;transition:all .15s;margin-bottom:1px;border:none;background:none;width:100%;text-align:left;font-family:inherit;}
+.nav-item:hover{background:var(--bg);color:var(--ink);}
+.nav-item.active{background:var(--accent-l);color:var(--accent);font-weight:500;}
+.nav-icon{font-size:.95rem;width:20px;text-align:center;flex-shrink:0;}
+.sidebar-bottom{padding:12px 10px;border-top:1px solid var(--border);}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;cursor:pointer;transition:background .15s;text-decoration:none;color:var(--ink);}
+.sidebar-user:hover{background:var(--bg);}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:var(--accent-l);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;overflow:hidden;}
+.user-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.user-name{font-size:.875rem;font-weight:500;line-height:1.2;}
+.user-plan{font-size:.7rem;color:var(--muted);}
+
+/* TOPBAR */
+.main{display:flex;flex-direction:column;min-height:100vh;}
+.topbar{height:60px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;background:rgba(247,245,240,.92);backdrop-filter:blur(12px);position:sticky;top:0;z-index:50;justify-content:space-between;}
+.topbar-title{font-family:'DM Serif Display',serif;font-size:1.15rem;letter-spacing:-.02em;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.icon-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.95rem;}
+
+/* MESSAGES LAYOUT */
+.messages-layout{display:grid;grid-template-columns:300px 1fr;height:calc(100vh - 60px);overflow:hidden;}
+
+/* CONV LIST */
+.conv-list{border-right:1px solid var(--border);overflow-y:auto;background:var(--white);}
+.conv-list-header{padding:16px 20px;border-bottom:1px solid var(--border);}
+.conv-list-title{font-family:'DM Serif Display',serif;font-size:1rem;}
+.conv-item{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s;}
+.conv-item:hover{background:var(--bg);}
+.conv-item.active{background:var(--accent-l);}
+.conv-avatar{width:44px;height:44px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;overflow:hidden;border:1.5px solid var(--border);}
+.conv-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.conv-info{flex:1;min-width:0;}
+.conv-name{font-size:.875rem;font-weight:500;margin-bottom:2px;}
+.conv-preview{font-size:.78rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.conv-preview.is-hi{color:var(--accent);font-weight:500;}
+.conv-time{font-size:.7rem;color:var(--muted);flex-shrink:0;}
+.conv-unread{width:8px;height:8px;background:var(--accent);border-radius:50%;flex-shrink:0;}
+
+/* CHAT AREA */
+.chat-area{display:flex;flex-direction:column;background:var(--bg);}
+.chat-header{padding:16px 24px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;}
+.chat-header-avatar{width:42px;height:42px;border-radius:50%;background:var(--accent-l);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;overflow:hidden;border:1.5px solid var(--border);}
+.chat-header-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.chat-header-name{font-size:.95rem;font-weight:600;}
+.chat-header-meta{font-size:.75rem;color:var(--muted);}
+.chat-messages{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:12px;}
+.msg-row{display:flex;gap:10px;align-items:flex-end;}
+.msg-row.mine{flex-direction:row-reverse;}
+.msg-av{width:30px;height:30px;border-radius:50%;background:var(--accent-l);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;overflow:hidden;}
+.msg-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.msg-bubble{max-width:65%;padding:10px 14px;border-radius:16px;font-size:.875rem;line-height:1.55;}
+.msg-bubble.theirs{background:var(--white);border:1px solid var(--border);border-bottom-left-radius:4px;}
+.msg-bubble.mine{background:var(--accent);color:var(--white);border-bottom-right-radius:4px;}
+.msg-bubble.hi-bubble{background:var(--accent-l);border:1.5px solid var(--accent);color:var(--accent);font-weight:500;border-radius:16px;}
+.msg-time{font-size:.68rem;color:var(--muted);margin-top:3px;}
+.msg-time.right{text-align:right;}
+.date-sep{text-align:center;font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:10px;margin:4px 0;}
+.date-sep::before,.date-sep::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* PREMIUM LOCK */
+.premium-lock{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-lg);padding:24px;text-align:center;margin:16px 24px;}
+.premium-lock h3{font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:8px;}
+.premium-lock p{font-size:.85rem;color:var(--muted);margin-bottom:16px;line-height:1.6;}
+.btn-upgrade{background:var(--gold);color:var(--white);border:none;padding:11px 24px;border-radius:50px;font-size:.875rem;font-weight:600;cursor:pointer;font-family:inherit;}
+.btn-upgrade:hover{opacity:.9;}
+
+/* CHAT INPUT */
+.chat-input-area{padding:16px 24px;background:var(--white);border-top:1px solid var(--border);}
+.chat-input-wrap{display:flex;gap:10px;align-items:center;}
+.chat-input{flex:1;padding:11px 16px;border:1.5px solid var(--border);border-radius:50px;font-family:inherit;font-size:.9rem;outline:none;background:var(--bg);color:var(--ink);transition:border-color .2s;}
+.chat-input:focus{border-color:var(--accent);}
+.chat-input:disabled{opacity:.5;cursor:not-allowed;}
+.send-btn{width:42px;height:42px;border-radius:50%;background:var(--accent);border:none;color:var(--white);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.send-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* NO CHAT / EMPTY */
+.no-chat{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);}
+.no-chat-icon{font-size:3rem;}
+.no-chat-title{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--ink);}
+.no-chat-sub{font-size:.875rem;text-align:center;max-width:240px;}
+
+@media(max-width:900px){.app{grid-template-columns:1fr;}.sidebar{display:none;}.messages-layout{grid-template-columns:1fr;}}
+
+/* LANG SELECTOR */
+.lang-selector{position:relative;}
+.lang-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;}
+.lang-dropdown{display:none;position:absolute;top:44px;right:0;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 8px 24px rgba(26,24,20,.12);z-index:100;min-width:160px;overflow:hidden;}
+.lang-dropdown.open{display:block;}
+.lang-opt{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;font-size:.875rem;transition:background .15s;}
+.lang-opt:hover{background:var(--bg);}
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside class="sidebar">
+  <span class="sidebar-logo">LingoPair<sup>Beta</sup></span>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Dashboard</a>
+    <a class="nav-item" href="search.html"><span class="nav-icon">🔍</span> Find Partners</a>
+    <a class="nav-item active" href="messages.html"><span class="nav-icon">💬</span> Messages</a>
+    <div class="nav-section">Account</div>
+    <a class="nav-item" href="profile.html"><span class="nav-icon">👤</span> My Profile</a>
+    <a class="nav-item" href="#"><span class="nav-icon">⚙️</span> Settings</a>
+    <a class="nav-item" href="#" onclick="logout()"><span class="nav-icon">🚪</span> Cerrar sesión</a>
+    <a class="nav-item" href="index.html#pricing"><span class="nav-icon">💎</span> Upgrade</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <a href="profile.html" class="sidebar-user">
+      <div class="user-avatar" id="sidebar-avatar">🧑</div>
+      <div>
+        <div class="user-name" id="sidebar-name"></div>
+        <div class="user-plan" id="sidebar-plan"></div>
+      </div>
+      <span style="margin-left:auto;font-size:.8rem;color:var(--muted);">›</span>
+    </a>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <span class="topbar-title">Messages</span>
+    <div class="topbar-right">
+      <div class="lang-selector">
+        <button class="lang-btn" id="lang-btn" onclick="toggleLangDropdown()">🌐</button>
+        <div class="lang-dropdown" id="lang-dropdown">
+          <div class="lang-opt" onclick="setLang('en')">🇺🇸 English</div>
+          <div class="lang-opt" onclick="setLang('es')">🇪🇸 Español</div>
+          <div class="lang-opt" onclick="setLang('fr')">🇫🇷 Français</div>
+          <div class="lang-opt" onclick="setLang('de')">🇩🇪 Deutsch</div>
+          <div class="lang-opt" onclick="setLang('it')">🇮🇹 Italiano</div>
+          <div class="lang-opt" onclick="setLang('pt')">🇧🇷 Português</div>
+          <div class="lang-opt" onclick="setLang('ru')">🇷🇺 Русский</div>
+          <div class="lang-opt" onclick="setLang('zh')">🇨🇳 中文</div>
+          <div class="lang-opt" onclick="setLang('ja')">🇯🇵 日本語</div>
+          <div class="lang-opt" onclick="setLang('ar')">🇸🇦 العربية</div>
+          <div class="lang-opt" onclick="setLang('id')">🇮🇩 Indonesia</div>
+        </div>
+      </div>
+      <button class="icon-btn">🔔</button>
+      <a href="profile.html" style="text-decoration:none;">
+        <div id="topbar-avatar" style="width:34px;height:34px;border-radius:50%;background:var(--accent-l);display:flex;align-items:center;justify-content:center;font-size:1rem;border:1.5px solid var(--border);cursor:pointer;overflow:hidden;">🧑</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="messages-layout">
+    <!-- CONV LIST -->
+    <div class="conv-list">
+      <div class="conv-list-header">
+        <div class="conv-list-title">Conversations</div>
+      </div>
+      <div id="conv-list-body">
+        <div style="padding:24px;text-align:center;color:var(--muted);font-size:.85rem;">Loading...</div>
+      </div>
+    </div>
+
+    <!-- CHAT AREA -->
+    <div class="chat-area" id="chat-area">
+      <div class="no-chat">
+        <div class="no-chat-icon">💬</div>
+        <div class="no-chat-title">Your messages</div>
+        <div class="no-chat-sub">Select a conversation or find partners to start chatting.</div>
+        <a href="search.html" style="margin-top:8px;padding:10px 20px;background:var(--accent);color:var(--white);border-radius:50px;font-size:.85rem;font-weight:500;text-decoration:none;">Find Partners →</a>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+// ── TRANSLATIONS ──────────────────────────────────────────────────────────────
+const langFlags = {en:'🇺🇸',es:'🇪🇸',fr:'🇫🇷',de:'🇩🇪',it:'🇮🇹',pt:'🇧🇷',ru:'🇷🇺',zh:'🇨🇳',ja:'🇯🇵',ar:'🇸🇦',id:'🇮🇩'};
+let currentLang = localStorage.getItem('lp_lang') || 'en';
+function toggleLangDropdown(){document.getElementById('lang-dropdown').classList.toggle('open');}
+function setLang(l){currentLang=l;localStorage.setItem('lp_lang',l);document.getElementById('lang-dropdown').classList.remove('open');document.getElementById('lang-btn').textContent=langFlags[l]||'🌐';document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';}
+document.addEventListener('click',function(e){if(!e.target.closest('.lang-selector')){const dd=document.getElementById('lang-dropdown');if(dd)dd.classList.remove('open');}});
+(function(){const btn=document.getElementById('lang-btn');if(btn)btn.textContent=langFlags[currentLang]||'🌐';document.documentElement.lang=currentLang;document.documentElement.dir=currentLang==='ar'?'rtl':'ltr';})();
+
+</script>
+<script>
+window.supabaseClient = supabase.createClient(
+  'https://kzwptgbhcddebxdfnsqx.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6d3B0Z2JoY2RkZWJ4ZGZuc3F4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4Mjk0NzksImV4cCI6MjA4OTQwNTQ3OX0.9ulqg6eSaH2ONzn4yD3wi6ymQ-aShjx_7nMJuOt3Rps'
+);
+
+let currentUser = null;
+let currentPlan = 'free';
+let currentConvId = null;
+let myAvatar = '🧑';
+let myPhotoUrl = null;
+
+async function logout() {
+  await window.supabaseClient.auth.signOut();
+  window.location.href = 'register.html';
+}
+
+function timeAgo(dateStr) {
+  const d = new Date(dateStr);
+  const now = new Date();
+  const diff = Math.floor((now - d) / 1000);
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return d.toLocaleDateString('en-US', {month:'short', day:'numeric'});
+}
+
+async function loadConversations() {
+  const { data: convs, error } = await window.supabaseClient
+    .from('conversations')
+    .select('*')
+    .or(`user_a.eq.${currentUser.id},user_b.eq.${currentUser.id}`)
+    .order('created_at', { ascending: false });
+
+  if (error || !convs?.length) {
+    document.getElementById('conv-list-body').innerHTML =
+      '<div style="padding:32px 16px;text-align:center;color:var(--muted);font-size:.85rem;">No conversations yet.<br><a href="search.html" style="color:var(--accent);font-weight:500;">Find partners →</a></div>';
+    return;
+  }
+
+  // Get the other user ids
+  const otherIds = convs.map(c => c.user_a === currentUser.id ? c.user_b : c.user_a);
+
+  // Load other users profiles
+  const { data: otherUsers } = await window.supabaseClient
+    .from('users')
+    .select('id, first_name, last_name, username, photo_url, avatar, plan')
+    .in('id', otherIds);
+
+  const usersMap = {};
+  (otherUsers || []).forEach(u => usersMap[u.id] = u);
+
+  // Load last message for each conversation
+  const convListHtml = await Promise.all(convs.map(async c => {
+    const otherId = c.user_a === currentUser.id ? c.user_b : c.user_a;
+    const other = usersMap[otherId] || {};
+    const otherName = [other.first_name, other.last_name].filter(Boolean).join(' ') || other.username || 'User';
+    const otherAvatarHtml = other.photo_url
+      ? `<img src="${other.photo_url}" alt="${otherName}">`
+      : (other.avatar || '🧑');
+
+    const { data: lastMsgs } = await window.supabaseClient
+      .from('messages')
+      .select('content, is_hi, created_at, sender_id')
+      .eq('conversation_id', c.id)
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    const lastMsg = lastMsgs?.[0];
+    const preview = lastMsg ? (lastMsg.is_hi ? '👋 Hi!' : lastMsg.content) : 'No messages yet';
+    const isHiClass = lastMsg?.is_hi ? 'is-hi' : '';
+    const time = lastMsg ? timeAgo(lastMsg.created_at) : '';
+
+    return `<div class="conv-item" onclick="openConv('${c.id}','${otherId}','${otherName.replace(/'/g,"\\'")}','${other.photo_url||''}','${other.avatar_emoji||'🧑'}','${other.plan||'free'}')">
+      <div class="conv-avatar">${otherAvatarHtml}</div>
+      <div class="conv-info">
+        <div class="conv-name">${otherName}</div>
+        <div class="conv-preview ${isHiClass}">${preview}</div>
+      </div>
+      <div class="conv-time">${time}</div>
+    </div>`;
+  }));
+
+  document.getElementById('conv-list-body').innerHTML = convListHtml.join('');
+}
+
+async function openConv(convId, otherId, otherName, otherPhotoUrl, otherAvatar, otherPlan) {
+  currentConvId = convId;
+
+  // Mark active
+  document.querySelectorAll('.conv-item').forEach(el => el.classList.remove('active'));
+  event.currentTarget?.classList.add('active');
+
+  const otherAvatarHtml = otherPhotoUrl
+    ? `<img src="${otherPhotoUrl}" alt="${otherName}">`
+    : (otherAvatar || '🧑');
+
+  const myAvatarHtml = myPhotoUrl
+    ? `<img src="${myPhotoUrl}" alt="me">`
+    : myAvatar;
+
+  // Load messages
+  const { data: msgs } = await window.supabaseClient
+    .from('messages')
+    .select('*')
+    .eq('conversation_id', convId)
+    .order('created_at', { ascending: true });
+
+  const isPremium = currentPlan !== 'free';
+  const isHiOnly = msgs?.length === 1 && msgs[0].is_hi && msgs[0].sender_id !== currentUser.id;
+  const isLocked = isHiOnly && !isPremium;
+
+  const messagesHtml = (msgs || []).map(m => {
+    const isMine = m.sender_id === currentUser.id;
+    const avatarHtml = isMine ? myAvatarHtml : otherAvatarHtml;
+    if (m.is_hi) {
+      return `<div class="msg-row ${isMine ? 'mine' : ''}">
+        ${!isMine ? `<div class="msg-av">${avatarHtml}</div>` : ''}
+        <div>
+          <div class="msg-bubble hi-bubble">👋 Hi!</div>
+          <div class="msg-time ${isMine ? 'right' : ''}">${timeAgo(m.created_at)}</div>
+        </div>
+        ${isMine ? `<div class="msg-av">${avatarHtml}</div>` : ''}
+      </div>`;
+    }
+    return `<div class="msg-row ${isMine ? 'mine' : ''}">
+      ${!isMine ? `<div class="msg-av">${avatarHtml}</div>` : ''}
+      <div>
+        <div class="msg-bubble ${isMine ? 'mine' : 'theirs'}">${m.content}</div>
+        <div class="msg-time ${isMine ? 'right' : ''}">${timeAgo(m.created_at)}</div>
+      </div>
+      ${isMine ? `<div class="msg-av">${avatarHtml}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  const lockHtml = isLocked ? `
+    <div class="premium-lock">
+      <div style="font-size:2rem;margin-bottom:8px;">🔒</div>
+      <h3>${otherName} sent you a Hi!</h3>
+      <p>Upgrade to Premium to reply and start a full conversation.</p>
+      <button class="btn-upgrade" onclick="window.location='index.html#pricing'">Upgrade to Premium — €9/mo →</button>
+    </div>` : '';
+
+  const inputHtml = !isLocked ? `
+    <div class="chat-input-area">
+      <div class="chat-input-wrap">
+        ${isPremium ? `
+          <input class="chat-input" id="msg-input" placeholder="Write a message..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}">
+          <button class="send-btn" onclick="sendMessage()">➤</button>
+        ` : `
+          <input class="chat-input" disabled placeholder="Upgrade to Premium to send messages...">
+          <button class="send-btn" style="background:var(--gold);" onclick="window.location='index.html#pricing'">⭐</button>
+        `}
+      </div>
+      ${!isPremium ? `<div style="font-size:.72rem;color:var(--muted);margin-top:8px;text-align:center;">Free users can only send Hi! <a href="index.html#pricing" style="color:var(--accent);font-weight:500;">Upgrade →</a></div>` : ''}
+    </div>` : '';
+
+  document.getElementById('chat-area').innerHTML = `
+    <div class="chat-header">
+      <div class="chat-header-avatar">${otherAvatarHtml}</div>
+      <div>
+        <div class="chat-header-name">${otherName}</div>
+        <div class="chat-header-meta">${otherPlan !== 'free' ? '⭐ Premium' : 'Free plan'}</div>
+      </div>
+    </div>
+    <div class="chat-messages" id="chat-messages">${messagesHtml}</div>
+    ${lockHtml}
+    ${inputHtml}
+  `;
+
+  // Scroll to bottom
+  const msgArea = document.getElementById('chat-messages');
+  if (msgArea) msgArea.scrollTop = msgArea.scrollHeight;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('msg-input');
+  if (!input || !input.value.trim() || !currentConvId) return;
+  const text = input.value.trim();
+  input.value = '';
+
+  const { error } = await window.supabaseClient
+    .from('messages')
+    .insert({ conversation_id: currentConvId, sender_id: currentUser.id, content: text, is_hi: false });
+
+  if (error) { alert('Error: ' + error.message); return; }
+
+  // Reload the conversation
+  const chatArea = document.getElementById('chat-area');
+  const header = chatArea.querySelector('.chat-header');
+  if (header) {
+    // Re-click current conv to refresh
+    const activeConv = document.querySelector('.conv-item.active');
+    if (activeConv) activeConv.click();
+  }
+  await loadConversations();
+}
+
+// BOOT
+let redirected = false;
+window.supabaseClient.auth.onAuthStateChange(async (event, session) => {
+  if (redirected) return;
+  if (event === 'INITIAL_SESSION') {
+    if (!session) { redirected = true; window.location.href = 'register.html'; return; }
+
+    currentUser = session.user;
+
+    const { data: me } = await window.supabaseClient
+      .from('users').select('first_name,last_name,plan,photo_url,avatar').eq('id', currentUser.id).single();
+
+    const myName = [me?.first_name, me?.last_name].filter(Boolean).join(' ') || session.user.email.split('@')[0];
+    currentPlan = me?.plan || 'free';
+    myPhotoUrl = me?.photo_url || null;
+    myAvatar = me?.avatar || '🧑';
+
+    document.getElementById('sidebar-name').textContent = myName;
+    document.getElementById('sidebar-plan').textContent = currentPlan === 'premium' ? '⭐ Premium' : currentPlan === 'teacher' ? '🎓 Teacher' : 'Free plan';
+    if (myPhotoUrl) {
+      document.getElementById('sidebar-avatar').innerHTML = `<img src="${myPhotoUrl}" alt="me">`;
+    if(document.getElementById('topbar-avatar')) document.getElementById('topbar-avatar').innerHTML = `<img src="${myPhotoUrl}" alt="me" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    } else if (myAvatar) {
+      document.getElementById('sidebar-avatar').textContent = myAvatar;
+    }
+
+    await loadConversations();
+  }
+  if (event === 'SIGNED_OUT') { redirected = true; window.location.href = 'register.html'; }
+});
+</script>
+</body>
+</html>

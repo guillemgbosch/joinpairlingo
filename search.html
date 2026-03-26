@@ -1,430 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LingoPair — Find Partners</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗣️</text></svg>">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#F7F5F0;--white:#FFFFFF;--ink:#1A1814;--ink2:#2d2a25;--muted:#8A8680;--border:#E2DDD6;--accent:#2D5BE3;--accent-l:#EEF2FD;--gold:#C8A96E;--green:#22c55e;--sidebar-w:232px;--radius:14px;--radius-lg:22px;}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;}
-.app{display:grid;grid-template-columns:var(--sidebar-w) 1fr;min-height:100vh;}
-.sidebar{background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
-.sidebar-logo{padding:20px 18px 16px;border-bottom:1px solid var(--border);font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--ink);display:block;cursor:default;}
-.sidebar-logo sup{font-family:'DM Sans',sans-serif;font-size:.5rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);vertical-align:super;margin-left:2px;}
-.sidebar-nav{flex:1;padding:12px 10px;}
-.nav-section{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:14px 8px 5px;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;font-size:.875rem;color:var(--muted);text-decoration:none;cursor:pointer;transition:all .15s;margin-bottom:1px;border:none;background:none;width:100%;text-align:left;font-family:inherit;}
-.nav-item:hover{background:var(--bg);color:var(--ink);}
-.nav-item.active{background:var(--accent-l);color:var(--accent);font-weight:500;}
-.nav-icon{font-size:.95rem;width:20px;text-align:center;flex-shrink:0;}
-.sidebar-bottom{padding:12px 10px;border-top:1px solid var(--border);}
-.sidebar-user{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;cursor:pointer;transition:background .15s;text-decoration:none;color:var(--ink);}
-.sidebar-user:hover{background:var(--bg);}
-.user-avatar{width:36px;height:36px;border-radius:50%;background:var(--accent-l);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;overflow:hidden;}
-.user-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
-.user-name{font-size:.875rem;font-weight:500;line-height:1.2;}
-.user-plan{font-size:.7rem;color:var(--muted);}
-.main{display:flex;flex-direction:column;min-height:100vh;}
-.topbar{height:60px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;background:rgba(247,245,240,.92);backdrop-filter:blur(12px);position:sticky;top:0;z-index:50;justify-content:space-between;gap:16px;}
-.topbar-title{font-family:'DM Serif Display',serif;font-size:1.15rem;letter-spacing:-.02em;white-space:nowrap;}
-.search-bar{flex:1;max-width:440px;position:relative;}
-.search-bar input{width:100%;padding:9px 14px 9px 38px;border:1.5px solid var(--border);border-radius:50px;font-family:inherit;font-size:.875rem;background:var(--white);color:var(--ink);outline:none;transition:border-color .2s;}
-.search-bar input:focus{border-color:var(--accent);}
-.search-bar::before{content:'🔍';position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:.8rem;pointer-events:none;}
-.topbar-right{display:flex;align-items:center;gap:10px;}
-.icon-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.95rem;}
-.page-body{display:grid;grid-template-columns:240px 1fr;flex:1;}
-.filters-panel{border-right:1px solid var(--border);background:var(--white);overflow-y:auto;padding:20px 18px;}
-.filters-title{font-family:'DM Serif Display',serif;font-size:1.05rem;margin-bottom:20px;display:block;}
-.filter-group{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border);}
-.filter-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:8px;display:block;}
-.filter-select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:.875rem;background:var(--bg);color:var(--ink);outline:none;cursor:pointer;}
-.btn-apply{width:100%;padding:11px;background:var(--ink);color:var(--white);border:none;border-radius:50px;font-size:.875rem;font-weight:500;cursor:pointer;font-family:inherit;margin-top:8px;}
-.results-area{overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px;}
-.results-count{font-size:.875rem;color:var(--muted);}
-.results-count strong{color:var(--ink);}
-.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
-.partner-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-lg);padding:20px;transition:transform .2s,border-color .2s,box-shadow .2s;cursor:pointer;}
-.partner-card:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:0 8px 24px rgba(45,91,227,.1);}
-.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
-.card-avatar{width:56px;height:56px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:1.6rem;border:2px solid var(--border);overflow:hidden;flex-shrink:0;}
-.card-avatar img{width:100%;height:100%;object-fit:cover;}
-.premium-chip{background:var(--gold);color:var(--white);font-size:.65rem;font-weight:700;padding:3px 8px;border-radius:20px;}
-.free-chip{background:var(--bg);color:var(--muted);font-size:.65rem;font-weight:600;padding:3px 8px;border-radius:20px;border:1px solid var(--border);}
-.card-name{font-size:.95rem;font-weight:600;margin-bottom:2px;}
-.card-location{font-size:.78rem;color:var(--muted);margin-bottom:8px;}
-.card-bio{font-size:.82rem;color:var(--muted);line-height:1.55;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.card-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
-.card-tag{background:var(--bg);border:1px solid var(--border);padding:2px 8px;border-radius:20px;font-size:.7rem;color:var(--muted);}
-.card-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
-.card-btn{padding:8px;border-radius:8px;font-size:.78rem;font-weight:500;cursor:pointer;font-family:inherit;text-align:center;transition:all .15s;border:1.5px solid var(--border);background:transparent;color:var(--ink);}
-.card-btn:hover{background:var(--bg);}
-.card-btn.primary{background:var(--ink);color:var(--white);border-color:var(--ink);}
-.card-btn.primary:hover{background:var(--ink2);}
-.modal-overlay{position:fixed;inset:0;background:rgba(26,24,20,.5);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
-.modal-overlay.open{display:flex;}
-.modal{background:var(--white);border-radius:var(--radius-lg);width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 32px 80px rgba(26,24,20,.22);}
-.modal-header{background:var(--ink);height:90px;position:relative;border-radius:var(--radius-lg) var(--radius-lg) 0 0;}
-.modal-avatar-big{width:72px;height:72px;border-radius:50%;border:3px solid var(--white);background:var(--accent-l);display:flex;align-items:center;justify-content:center;font-size:2rem;transform:translateY(36px);margin-left:24px;overflow:hidden;box-shadow:0 4px 16px rgba(26,24,20,.15);}
-.modal-avatar-big img{width:100%;height:100%;object-fit:cover;}
-.modal-close{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.15);color:var(--white);border:none;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;}
-.modal-body{padding:48px 24px 28px;}
-.modal-name{font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:4px;}
-.modal-meta{font-size:.82rem;color:var(--muted);margin-bottom:14px;}
-.modal-bio{font-size:.9rem;line-height:1.75;font-weight:300;margin-bottom:16px;}
-.modal-section-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:8px;}
-.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:24px;}
-.modal-btn{padding:12px;border-radius:50px;font-size:.875rem;font-weight:500;cursor:pointer;font-family:inherit;text-align:center;transition:all .2s;border:none;}
-.modal-btn-primary{background:var(--ink);color:var(--white);}
-.modal-btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--ink);}
-@media(max-width:900px){.app{grid-template-columns:1fr;}.sidebar{display:none;}.page-body{grid-template-columns:1fr;}.filters-panel{display:none;}}
-
-/* LANG SELECTOR */
-.lang-selector{position:relative;}
-.lang-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;}
-.lang-dropdown{display:none;position:absolute;top:44px;right:0;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 8px 24px rgba(26,24,20,.12);z-index:100;min-width:160px;overflow:hidden;}
-.lang-dropdown.open{display:block;}
-.lang-opt{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;font-size:.875rem;transition:background .15s;}
-.lang-opt:hover{background:var(--bg);}
-</style>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/i18next/i18next.min.js"></script>
+    <title>Search</title>
 </head>
 <body>
-<div class="app">
-<aside class="sidebar">
-  <span class="sidebar-logo">LingoPair<sup>Beta</sup></span>
-  <nav class="sidebar-nav">
-    <div class="nav-section">Main</div>
-    <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Dashboard</a>
-    <a class="nav-item active" href="search.html"><span class="nav-icon">🔍</span> Find Partners</a>
-    <a class="nav-item" href="messages.html"><span class="nav-icon">💬</span> Messages</a>
-    <div class="nav-section">Account</div>
-    <a class="nav-item" href="profile.html"><span class="nav-icon">👤</span> My Profile</a>
-    <a class="nav-item" href="#"><span class="nav-icon">⚙️</span> Settings</a>
-    <a class="nav-item" href="#" onclick="logout()"><span class="nav-icon">🚪</span> Cerrar sesión</a>
-    <a class="nav-item" href="index.html#pricing"><span class="nav-icon">💎</span> Upgrade</a>
-  </nav>
-  <div class="sidebar-bottom">
-    <a href="profile.html" class="sidebar-user">
-      <div class="user-avatar" id="sidebar-avatar">🧑</div>
-      <div>
-        <div class="user-name" id="sidebar-name"></div>
-        <div class="user-plan" id="sidebar-plan"></div>
-      </div>
-      <span style="margin-left:auto;font-size:.8rem;color:var(--muted);">›</span>
-    </a>
-  </div>
-</aside>
-<main class="main">
-  <div class="topbar">
-    <span class="topbar-title">Find Partners</span>
-    <div class="search-bar">
-      <input type="text" id="search-input" placeholder="Search by name, country, bio..." oninput="filterCards()">
-    </div>
-    <div class="topbar-right">
-      <div class="lang-selector">
-        <button class="lang-btn" id="lang-btn" onclick="toggleLangDropdown()">🌐</button>
-        <div class="lang-dropdown" id="lang-dropdown">
-          <div class="lang-opt" onclick="setLang('en')">🇺🇸 English</div>
-          <div class="lang-opt" onclick="setLang('es')">🇪🇸 Español</div>
-          <div class="lang-opt" onclick="setLang('fr')">🇫🇷 Français</div>
-          <div class="lang-opt" onclick="setLang('de')">🇩🇪 Deutsch</div>
-          <div class="lang-opt" onclick="setLang('it')">🇮🇹 Italiano</div>
-          <div class="lang-opt" onclick="setLang('pt')">🇧🇷 Português</div>
-          <div class="lang-opt" onclick="setLang('ru')">🇷🇺 Русский</div>
-          <div class="lang-opt" onclick="setLang('zh')">🇨🇳 中文</div>
-          <div class="lang-opt" onclick="setLang('ja')">🇯🇵 日本語</div>
-          <div class="lang-opt" onclick="setLang('ar')">🇸🇦 العربية</div>
-          <div class="lang-opt" onclick="setLang('id')">🇮🇩 Indonesia</div>
+    <div id="search-container">
+        <input type="text" id="search-bar" placeholder="Search...">
+        <div id="filters">
+            <label for="language">Language:</label>
+            <select id="language">
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+                <option value="zh">Chinese</option>
+                <option value="ja">Japanese</option>
+                <option value="ru">Russian</option>
+                <option value="pt">Portuguese</option>
+                <option value="it">Italian</option>
+                <option value="ar">Arabic</option>
+                <option value="hi">Hindi</option>
+            </select>
         </div>
-      </div>
-      <button class="icon-btn">🔔</button>
-      <a href="profile.html" style="text-decoration:none;">
-        <div id="topbar-avatar" style="width:34px;height:34px;border-radius:50%;background:var(--accent-l);display:flex;align-items:center;justify-content:center;font-size:1rem;border:1.5px solid var(--border);cursor:pointer;overflow:hidden;">🧑</div>
-      </a>
+        <button id="filter-btn">Apply Filters</button>
     </div>
-  </div>
-  <div class="page-body">
-    <aside class="filters-panel">
-      <span class="filters-title">Filters</span>
-      <div class="filter-group">
-        <label class="filter-label">Country</label>
-        <select class="filter-select" id="filter-country" onchange="filterCards()">
-          <option value="">Any country</option>
-          <option value="Spain">🇪🇸 Spain</option>
-          <option value="United States">🇺🇸 United States</option>
-          <option value="United Kingdom">🇬🇧 United Kingdom</option>
-          <option value="France">🇫🇷 France</option>
-          <option value="Germany">🇩🇪 Germany</option>
-          <option value="Japan">🇯🇵 Japan</option>
-          <option value="Mexico">🇲🇽 Mexico</option>
-          <option value="Brazil">🇧🇷 Brazil</option>
-        </select>
-      </div>
-      <div class="filter-group">
-        <label class="filter-label">Plan</label>
-        <select class="filter-select" id="filter-plan" onchange="filterCards()">
-          <option value="">Any plan</option>
-          <option value="premium">⭐ Premium</option>
-          <option value="free">Free</option>
-        </select>
-      </div>
-      <button class="btn-apply" onclick="filterCards()">Apply</button>
-    </aside>
-    <div class="results-area">
-      <div class="results-count">Showing <strong id="result-count">0</strong> partners</div>
-      <div class="cards-grid" id="cards-grid">
-        <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">Loading partners...</div>
-      </div>
+
+    <div id="partner-cards">
+        <!-- Partner card template -->
+        <div class="partner-card">
+            <h3>Partner Name</h3>
+            <p>Compatibility: <span class="compatibility">85%</span></p>
+        </div>
+        <!-- More partner cards would go here -->
     </div>
-  </div>
-</main>
-</div>
 
-<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
-  <div class="modal">
-    <div class="modal-header" id="modal-header" style="background:linear-gradient(135deg,var(--ink) 0%,#3a3020 100%);background-size:cover;background-position:center;">
-      <div class="modal-avatar-big" id="modal-avatar">🧑</div>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="profile-modal" style="display:none;">
+        <h2>Profile</h2>
+        <button id="close-modal">Close</button>
+        <div id="profile-content">
+            <!-- Profile information would be populated here -->
+        </div>
     </div>
-    <div class="modal-body">
-      <div class="modal-name" id="modal-name"></div>
-      <div class="modal-meta" id="modal-meta"></div>
-      <div class="modal-bio" id="modal-bio"></div>
-      <div id="modal-languages"></div>
-      <div id="modal-interests" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;"></div>
-      <div class="modal-actions">
-        <button class="modal-btn modal-btn-outline" onclick="closeModal()">Maybe later</button>
-        <button class="modal-btn modal-btn-primary" id="modal-hi-btn">👋 Send Hi!</button>
-      </div>
-    </div>
-  </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-// ── TRANSLATIONS ──────────────────────────────────────────────────────────────
-const langFlags = {en:'🇺🇸',es:'🇪🇸',fr:'🇫🇷',de:'🇩🇪',it:'🇮🇹',pt:'🇧🇷',ru:'🇷🇺',zh:'🇨🇳',ja:'🇯🇵',ar:'🇸🇦',id:'🇮🇩'};
-let currentLang = localStorage.getItem('lp_lang') || 'en';
-const ST = {
-  en:{page_title:'Find Partners',filters:'Filters',any_country:'Any country',any_plan:'Any plan',apply:'Apply',showing:'Showing',partners:'partners',no_partners:'No partners found. Try adjusting your search.',view_profile:'View profile',send_hi:'👋 Hi!',maybe_later:'Maybe later',nav_dashboard:'Dashboard',nav_find:'Find Partners',nav_messages:'Messages',nav_profile:'My Profile',nav_settings:'Settings',nav_logout:'Sign out',nav_upgrade:'Upgrade'},
-  es:{page_title:'Buscar Compañeros',filters:'Filtros',any_country:'Cualquier país',any_plan:'Cualquier plan',apply:'Aplicar',showing:'Mostrando',partners:'compañeros',no_partners:'No se encontraron compañeros.',view_profile:'Ver perfil',send_hi:'👋 ¡Hola!',maybe_later:'Quizás luego',nav_dashboard:'Panel',nav_find:'Buscar compañeros',nav_messages:'Mensajes',nav_profile:'Mi Perfil',nav_settings:'Ajustes',nav_logout:'Cerrar sesión',nav_upgrade:'Mejorar'},
-  fr:{page_title:'Trouver des Partenaires',filters:'Filtres',any_country:'Tous les pays',any_plan:'Tous les plans',apply:'Appliquer',showing:'Affichage',partners:'partenaires',no_partners:'Aucun partenaire trouvé.',view_profile:'Voir le profil',send_hi:'👋 Salut!',maybe_later:'Peut-être plus tard',nav_dashboard:'Tableau de bord',nav_find:'Trouver des partenaires',nav_messages:'Messages',nav_profile:'Mon Profil',nav_settings:'Paramètres',nav_logout:'Déconnexion',nav_upgrade:'Upgrade'},
-  de:{page_title:'Partner finden',filters:'Filter',any_country:'Alle Länder',any_plan:'Alle Pläne',apply:'Anwenden',showing:'Zeige',partners:'Partner',no_partners:'Keine Partner gefunden.',view_profile:'Profil ansehen',send_hi:'👋 Hallo!',maybe_later:'Vielleicht später',nav_dashboard:'Dashboard',nav_find:'Partner finden',nav_messages:'Nachrichten',nav_profile:'Mein Profil',nav_settings:'Einstellungen',nav_logout:'Abmelden',nav_upgrade:'Upgrade'},
-  it:{page_title:'Trova Partner',filters:'Filtri',any_country:'Tutti i paesi',any_plan:'Tutti i piani',apply:'Applica',showing:'Mostrando',partners:'partner',no_partners:'Nessun partner trovato.',view_profile:'Vedi profilo',send_hi:'👋 Ciao!',maybe_later:'Forse dopo',nav_dashboard:'Dashboard',nav_find:'Trova partner',nav_messages:'Messaggi',nav_profile:'Il mio profilo',nav_settings:'Impostazioni',nav_logout:'Esci',nav_upgrade:'Upgrade'},
-  pt:{page_title:'Encontrar Parceiros',filters:'Filtros',any_country:'Qualquer país',any_plan:'Qualquer plano',apply:'Aplicar',showing:'Mostrando',partners:'parceiros',no_partners:'Nenhum parceiro encontrado.',view_profile:'Ver perfil',send_hi:'👋 Oi!',maybe_later:'Talvez depois',nav_dashboard:'Painel',nav_find:'Encontrar parceiros',nav_messages:'Mensagens',nav_profile:'Meu Perfil',nav_settings:'Configurações',nav_logout:'Sair',nav_upgrade:'Upgrade'},
-  ru:{page_title:'Найти партнёров',filters:'Фильтры',any_country:'Любая страна',any_plan:'Любой план',apply:'Применить',showing:'Показано',partners:'партнёров',no_partners:'Партнёры не найдены.',view_profile:'Смотреть профиль',send_hi:'👋 Привет!',maybe_later:'Может позже',nav_dashboard:'Главная',nav_find:'Найти партнёров',nav_messages:'Сообщения',nav_profile:'Мой профиль',nav_settings:'Настройки',nav_logout:'Выйти',nav_upgrade:'Upgrade'},
-  zh:{page_title:'寻找伙伴',filters:'筛选',any_country:'任何国家',any_plan:'任何计划',apply:'应用',showing:'显示',partners:'个伙伴',no_partners:'未找到伙伴。',view_profile:'查看资料',send_hi:'👋 你好！',maybe_later:'也许以后',nav_dashboard:'仪表板',nav_find:'寻找伙伴',nav_messages:'消息',nav_profile:'我的资料',nav_settings:'设置',nav_logout:'退出',nav_upgrade:'升级'},
-  ja:{page_title:'パートナーを探す',filters:'フィルター',any_country:'全ての国',any_plan:'全てのプラン',apply:'適用',showing:'表示中',partners:'人のパートナー',no_partners:'パートナーが見つかりません。',view_profile:'プロフィールを見る',send_hi:'👋 こんにちは！',maybe_later:'また今度',nav_dashboard:'ダッシュボード',nav_find:'パートナーを探す',nav_messages:'メッセージ',nav_profile:'プロフィール',nav_settings:'設定',nav_logout:'サインアウト',nav_upgrade:'アップグレード'},
-  ar:{page_title:'إيجاد شركاء',filters:'فلاتر',any_country:'أي بلد',any_plan:'أي خطة',apply:'تطبيق',showing:'عرض',partners:'شركاء',no_partners:'لم يتم العثور على شركاء.',view_profile:'عرض الملف',send_hi:'👋 مرحباً!',maybe_later:'ربما لاحقاً',nav_dashboard:'لوحة التحكم',nav_find:'إيجاد شركاء',nav_messages:'الرسائل',nav_profile:'ملفي',nav_settings:'الإعدادات',nav_logout:'خروج',nav_upgrade:'ترقية'},
-  id:{page_title:'Cari Mitra',filters:'Filter',any_country:'Semua negara',any_plan:'Semua paket',apply:'Terapkan',showing:'Menampilkan',partners:'mitra',no_partners:'Tidak ada mitra ditemukan.',view_profile:'Lihat profil',send_hi:'👋 Hai!',maybe_later:'Mungkin nanti',nav_dashboard:'Dasbor',nav_find:'Cari mitra',nav_messages:'Pesan',nav_profile:'Profil Saya',nav_settings:'Pengaturan',nav_logout:'Keluar',nav_upgrade:'Upgrade'}
-};
-function ts(k){return(ST[currentLang]&&ST[currentLang][k])||ST.en[k]||k;}
-function toggleLangDropdown(){document.getElementById('lang-dropdown').classList.toggle('open');}
-function setLang(l){currentLang=l;localStorage.setItem('lp_lang',l);document.getElementById('lang-dropdown').classList.remove('open');document.getElementById('lang-btn').textContent=langFlags[l]||'🌐';document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';applyPageTranslations();}
-document.addEventListener('click',function(e){if(!e.target.closest('.lang-selector')){const dd=document.getElementById('lang-dropdown');if(dd)dd.classList.remove('open');}});
-function applyPageTranslations(){
-  document.getElementById('lang-btn').textContent=langFlags[currentLang]||'🌐';
-  document.querySelector('.topbar-title').textContent=ts('page_title');
-  document.querySelector('.filters-title') && (document.querySelector('.filters-title').textContent=ts('filters'));
-  document.documentElement.lang=currentLang;
-  document.documentElement.dir=currentLang==='ar'?'rtl':'ltr';
-}
-(function(){const btn=document.getElementById('lang-btn');if(btn)btn.textContent=langFlags[currentLang]||'🌐';document.documentElement.lang=currentLang;document.documentElement.dir=currentLang==='ar'?'rtl':'ltr';})();
+    <script>
+        // Supabase integration example
+        const { createClient } = supabase;
+        const supabaseUrl = 'YOUR_SUPABASE_URL';
+        const supabaseKey = 'YOUR_SUPABASE_ANON_KEY';
+        const supabase = createClient(supabaseUrl, supabaseKey);
 
-</script>
-<script>
-window.supabaseClient = supabase.createClient(
-  'https://kzwptgbhcddebxdfnsqx.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6d3B0Z2JoY2RkZWJ4ZGZuc3F4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4Mjk0NzksImV4cCI6MjA4OTQwNTQ3OX0.9ulqg6eSaH2ONzn4yD3wi6ymQ-aShjx_7nMJuOt3Rps'
-);
+        // Translation system initialization
+        i18next.init({
+            lng: 'en',
+            resources: {
+                en: { translation: { "key": "value" } },
+                es: { translation: { "key": "value" } },
+                // Other languages...
+            }
+        });
 
-let allUsers = [];
-let currentUserId = null;
-
-async function logout() {
-  await window.supabaseClient.auth.signOut();
-  window.location.href = 'register.html';
-}
-
-function filterCards() {
-  const query = document.getElementById('search-input').value.toLowerCase().trim();
-  const country = document.getElementById('filter-country').value;
-  const plan = document.getElementById('filter-plan').value;
-  const filtered = allUsers.filter(u => {
-    const name = ((u.first_name || '') + ' ' + (u.last_name || '')).toLowerCase();
-    const bio = (u.bio || '').toLowerCase();
-    const uc = (u.country || '').toLowerCase();
-    const matchQ = !query || name.includes(query) || bio.includes(query) || uc.includes(query);
-    const matchC = !country || (u.country || '') === country;
-    const matchP = !plan || (u.plan || 'free') === plan;
-    return matchQ && matchC && matchP;
-  });
-  renderCards(filtered);
-}
-
-function getAvatar(u) {
-  if (u.photo_url) return '<img src="' + u.photo_url + '" alt="avatar">';
-  return u.avatar_emoji || '🧑';
-}
-
-function getLangs(u) {
-  try {
-    const langs = u.native_lang ? JSON.parse(u.native_lang) : [];
-    if (!langs.length) return '';
-    return '<div class="card-tags">' +
-      langs.map(l => '<span class="card-tag">' + (l.flag||'') + ' ' + l.language + ' (' + (l.type==='native'?'Native':l.level) + ')</span>').join('') +
-      '</div>';
-  } catch(e) { return ''; }
-}
-
-function getInterests(u) {
-  if (!u.interests || !u.interests.length) return '';
-  return '<div class="card-tags">' +
-    u.interests.slice(0,3).map(i => '<span class="card-tag">' + i + '</span>').join('') +
-    '</div>';
-}
-
-function renderCards(users) {
-  const grid = document.getElementById('cards-grid');
-  document.getElementById('result-count').textContent = users.length;
-  if (!users.length) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);">No partners found.</div>';
-    return;
-  }
-  grid.innerHTML = users.map(u => {
-    const name = [u.first_name, u.last_name].filter(Boolean).join(' ') || u.username || 'User';
-    const country = u.country ? '📍 ' + u.country : '🌍 Location not set';
-    const bio = u.bio || 'No bio yet.';
-    const isPremium = u.plan && u.plan !== 'free';
-    const chip = isPremium ? '<span class="premium-chip">⭐ Premium</span>' : '<span class="free-chip">Free</span>';
-    const uid = u.id;
-    const safeName = name.replace(/'/g, "\\'");
-
-    return '<div class="partner-card" onclick="openModal(\'' + uid + '\')">' +
-      '<div class="card-top"><div class="card-avatar">' + getAvatar(u) + '</div>' + chip + '</div>' +
-      '<div class="card-name">' + name + '</div>' +
-      '<div class="card-location">' + country + '</div>' +
-      '<div class="card-bio">' + bio + '</div>' +
-      getLangs(u) +
-      getInterests(u) +
-      '<div class="card-actions">' +
-        '<button class="card-btn" onclick="event.stopPropagation();openModal(\'' + uid + '\')">View profile</button>' +
-        '<button class="card-btn primary" onclick="event.stopPropagation();sendHi(\'' + uid + '\',\'' + safeName + '\')">👋 Hi!</button>' +
-      '</div></div>';
-  }).join('');
-}
-
-function openModal(userId) {
-  document.getElementById('modal-name').textContent = 'Loading...';
-  document.getElementById('modal-meta').textContent = '';
-  document.getElementById('modal-bio').textContent = '';
-  document.getElementById('modal-languages').innerHTML = '';
-  document.getElementById('modal-interests').innerHTML = '';
-  document.getElementById('modal-avatar').innerHTML = '🧑';
-  document.getElementById('modal-overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-
-  window.supabaseClient.from('users').select('id,first_name,last_name,username,country,bio,plan,photo_url,avatar_emoji,interests,native_lang').eq('id', userId).single()
-    .then(function(res) {
-      var u = res.data;
-      if (!u) { document.getElementById('modal-name').textContent = 'Error'; return; }
-      var name = [u.first_name, u.last_name].filter(Boolean).join(' ') || u.username || 'User';
-      // Apply cover
-      const modalHeader = document.getElementById('modal-header');
-      if (u.cover_url) {
-        try {
-          const cd = JSON.parse(u.cover_url);
-          modalHeader.style.background = cd.bg;
-          if (cd.img) { modalHeader.style.backgroundImage = 'url(' + cd.img + ')'; modalHeader.style.backgroundSize = 'cover'; modalHeader.style.backgroundPosition = 'center'; }
-        } catch(e) {}
-      } else {
-        modalHeader.style.background = 'linear-gradient(135deg,var(--ink) 0%,#3a3020 100%)';
-        modalHeader.style.backgroundImage = 'none';
-      }
-      document.getElementById('modal-avatar').innerHTML = getAvatar(u);
-      document.getElementById('modal-name').textContent = name;
-      document.getElementById('modal-meta').textContent = (u.country ? '📍 ' + u.country : '') + (u.plan && u.plan !== 'free' ? ' · ⭐ Premium' : ' · Free plan');
-      document.getElementById('modal-bio').textContent = u.bio || 'No bio yet.';
-      try {
-        var langs = u.native_lang ? JSON.parse(u.native_lang) : [];
-        if (langs.length) {
-          document.getElementById('modal-languages').innerHTML =
-            '<div style="margin-bottom:14px;"><div class="modal-section-label">Languages</div>' +
-            '<div style="display:flex;flex-wrap:wrap;gap:6px;">' +
-            langs.map(function(l){ return '<span style="background:var(--bg);border:1px solid var(--border);padding:4px 10px;border-radius:20px;font-size:.8rem;">' + (l.flag||'') + ' ' + l.language + ' <span style="font-size:.7rem;color:var(--muted);">(' + (l.type==='native'?'Native':l.level) + ')</span></span>'; }).join('') +
-            '</div></div>';
-        }
-      } catch(e) {}
-      if (u.interests && u.interests.length) {
-        document.getElementById('modal-interests').innerHTML =
-          '<div style="margin-bottom:14px;"><div class="modal-section-label">Interests</div>' +
-          '<div style="display:flex;flex-wrap:wrap;gap:6px;">' +
-          u.interests.map(function(i){ return '<span style="background:var(--bg);border:1px solid var(--border);padding:3px 10px;border-radius:20px;font-size:.78rem;color:var(--muted);">' + i + '</span>'; }).join('') +
-          '</div></div>';
-      }
-      document.getElementById('modal-hi-btn').onclick = function() { sendHi(u.id, name); closeModal(); };
-    });
-}
-
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-async function sendHi(userId, name) {
-  if (!currentUserId) return;
-  let { data: conv } = await window.supabaseClient
-    .from('conversations').select('id')
-    .or('and(user_a.eq.' + currentUserId + ',user_b.eq.' + userId + '),and(user_a.eq.' + userId + ',user_b.eq.' + currentUserId + ')')
-    .single();
-  if (!conv) {
-    const { data: newConv, error } = await window.supabaseClient
-      .from('conversations').insert({ user_a: currentUserId, user_b: userId }).select('id').single();
-    if (error) { alert('Error: ' + error.message); return; }
-    conv = newConv;
-  }
-  const { data: existing } = await window.supabaseClient
-    .from('messages').select('id')
-    .eq('conversation_id', conv.id).eq('sender_id', currentUserId).eq('is_hi', true).single();
-  if (existing) { alert('You already sent a Hi! to ' + name); return; }
-  const { error: msgError } = await window.supabaseClient
-    .from('messages').insert({ conversation_id: conv.id, sender_id: currentUserId, content: 'Hi! 👋', is_hi: true });
-  if (msgError) { alert('Error: ' + msgError.message); return; }
-  alert('Hi sent to ' + name + '! 👋');
-}
-
-document.addEventListener('keydown', function(e) { if(e.key==='Escape') closeModal(); });
-
-let redirected = false;
-window.supabaseClient.auth.onAuthStateChange(async function(event, session) {
-  if (redirected) return;
-  if (event === 'INITIAL_SESSION') {
-    if (!session) { redirected = true; window.location.href = 'register.html'; return; }
-    currentUserId = session.user.id;
-    const { data: me } = await window.supabaseClient
-      .from('users').select('first_name,last_name,plan,photo_url,avatar_emoji').eq('id', currentUserId).single();
-    const myName = [me?.first_name, me?.last_name].filter(Boolean).join(' ') || session.user.email.split('@')[0];
-    const myPlan = me?.plan || 'free';
-    document.getElementById('sidebar-name').textContent = myName;
-    document.getElementById('sidebar-plan').textContent = myPlan === 'premium' ? '⭐ Premium' : myPlan === 'teacher' ? '🎓 Teacher' : 'Free plan';
-    if (me?.photo_url) {
-      document.getElementById('sidebar-avatar').innerHTML = '<img src="' + me.photo_url + '" alt="avatar">';
-      if(document.getElementById('topbar-avatar')) document.getElementById('topbar-avatar').innerHTML = '<img src="' + me.photo_url + '" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
-    } else {
-      document.getElementById('sidebar-avatar').textContent = me?.avatar_emoji || '🧑';
-    }
-    const { data: users } = await window.supabaseClient
-      .from('users')
-      .select('id,first_name,last_name,username,country,bio,plan,photo_url,avatar_emoji,interests,native_lang,availability')
-      .neq('id', currentUserId)
-      .range(0, 99);
-    allUsers = users || [];
-    renderCards(allUsers);
-  }
-  if (event === 'SIGNED_OUT') { redirected = true; window.location.href = 'register.html'; }
-});
-</script>
+        // Event listeners, AJAX calls, and other features would be implemented here
+    </script>
 </body>
 </html>
